@@ -8,4 +8,6 @@
 mod rhi;
 
 // Re-exports
-pub use rhi::*;
+pub use rhi_enums::*;
+pub use rhi_structs::*;
+pub use rhi_traits::*;
