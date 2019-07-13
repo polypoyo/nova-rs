@@ -1,0 +1,19 @@
+language: rust
+rust:
+  - stable
+  - nightly
+
+os:
+  - osx
+  - linux
+
+matrix:
+  allow_failures:
+    - rust: nightly
+  fast_finish: true
+
+cache: cargo
+
+script:
+  - cargo build --verbose --all
+  - cargo test --verbose --all
