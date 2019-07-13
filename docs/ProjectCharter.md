@@ -40,6 +40,10 @@ I created this project as a replacement renderer for Minecraft. While Nova is no
 
 Nova must be able to load Optifine shaders. It must load existing popular shaderpacks like SEUS, Molly, and Continuum 2.0 and must run those shaders as close to Optifine shaders as possible - except for the bugs. Nova should not have the same bugs as Optifine
 
+##### Compatible with Bedrock shaders
+
+Nove must be compatible with Bedrock shaders. This will be hard to design for, because there's no official way to make shaders for the Bedrock engine, but Nova's shaderpack format is based on the unoffical way to make Bedrock shader
+
 #### Design a new render graph-based shaderpack format
 
 Nova will give more control to shader developers than Optifine. Nova will use a shaderpack format based on the notion of a render graph. A render graph has multiple passes, each of which declared the resources that they read from, and the resources that they write to. From that information Nova will figure out the most optimal order for the render passes. It will then render the current scene using this render graph
