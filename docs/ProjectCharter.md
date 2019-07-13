@@ -24,6 +24,10 @@ Nova must use explicit graphics apis. Explicit APIs both give more control over 
 
 Nova must run well on the CPUs of today as well as the CPUs of tomorrow. While CPU clock speed increases, if they ever return, will automatically make Nova run faster, increated numbers of cores will not. Given recent trends in CPU development, designing for an arbitrary number of threads seems most prudent. Thus, Nova must use task-based multithreading, where small, compartmentalized tasks are sent to a thread pool, the size of which is equal to the number of logical CPU cores. This will allos Nova to scale for future hardware in a meaningful way
 
+#### Scale across multiple GPUs
+
+Nova must scale across the computer's available GPUs. Nova should be able to utilize multiple GPUs at once to deliver faster frames to the user. Accomplishing this will be a joint effort between Nova developers and shaderpack developers: While I _do_ think it'll be possible to scale automatically, Nova should also provide an interface so that shaderpacka authors can say "run this on GPU 1" or "run this on any GPU"
+
 #### Custom memory management
 
 Nova should have custom memory management throughout, to ensure that the memory Nova uses is laid out in a CPU cache-optimal way. While Rust's standard library doesn't yet have support for custom alloctors, the rest of Nova certainly can use custom allocators whenever possible
@@ -46,7 +50,7 @@ Nove must be compatible with Bedrock shaders. This will be hard to design for, b
 
 #### Design a new render graph-based shaderpack format
 
-Nova will give more control to shader developers than Optifine. Nova will use a shaderpack format based on the notion of a render graph. A render graph has multiple passes, each of which declared the resources that they read from, and the resources that they write to. From that information Nova will figure out the most optimal order for the render passes. It will then render the current scene using this render graph
+Nova will give more control to shader developers than Optifine. Nova will use a shaderpack format based on the notion of a render graph. A render graph has multiple render passes, each of which declared the resources that they read from, the resources that they write to, and (optionally) information about what GPU to run the render pass on. From that information Nova will figure out the most optimal order for the render passes and the most optimal GPUs to run them on, if the user hase multiple GPUs. It will then render the current scene using this render graph
 
 In addition to this implementation of a render graph, Nova will have a number of other concepts in its shaderpack:
 
