@@ -85,7 +85,7 @@ pub trait Device {
     fn create_command_allocator(
         &self,
         create_info: CommandAllocatorCreateInfo,
-    ) -> Result<dyn CommandPool, CommandAllocatorCreateError>;
+    ) -> Result<dyn CommandPool, CommandAllocatorCreationError>;
 
     /// Creates a new renderpass from the provided shaderpack data
     ///
