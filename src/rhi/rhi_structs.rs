@@ -1,9 +1,4 @@
-use super::rhi_enums::CommandListType;
-
-/// Describes how to create a logical device
-pub struct LogicalDeviceCreateInfo {
-
-}
+use super::rhi_enums::*;
 
 /// Describes what kind of command allocator you want to create
 pub struct CommandAllocatorCreateInfo {

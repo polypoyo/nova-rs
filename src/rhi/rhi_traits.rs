@@ -23,15 +23,25 @@ pub trait GraphicsAPI {
 pub trait PhysicalDevice {
     fn get_properties(&self) -> PhysicalDeviceProperties;
 
-    fn supports_all_queue_types(&self) -> bool;
+    /// Checks if this physical device is suitable for Nova
+    ///
+    /// Devices are suitable for Nova if they
+    /// - Have queues that support graphics, compute, transfer, and present operations
+    /// - Support tessellation and geometry shaders
+    ///
+    /// Nova's supported APIs have very different ways to check what features and capabilities a
+    /// physical device has, so this method encapsulates all that
+    ///
+    /// Future work will probably come up with a way to score physical devices from most suitable to
+    /// least suitable, but for now this is fine
+    fn can_be_used_by_nova(&self) -> bool;
 
     /// Creates a new logical Device
-    /// 
-    /// # Parameters
-    /// 
-    /// * `create_info` - Information about how you want the Device to be created
-    // TODO: Maybe consume self?
-    fn create_logical_device(&self, create_info: LogicalDeviceCreateInfo) -> Result<dyn Device, DeviceCreationError>;
+    ///
+    /// Nova has very specific requirements for a logical device, and how you express those
+    /// requirements varies significantly by API. Thus, this method doesn't take a create info
+    /// struct of any sort
+    fn create_logical_device(&self) -> Result<dyn Device, DeviceCreationError>;
 }
 
 /// The logical device that we're rendering with
@@ -144,11 +154,25 @@ pub trait Device {
     /// * `count` - The number of fences to create
     fn create_fences(&self, count: u32) -> Result<Vec<dyn Fence>, FenceCreateError>;
 
+    /// Waits for all the provided fences to be signalled
+    ///
+    /// # Parameters
+    ///
+    /// * `fences` - All the fences to wait for
+    fn wait_for_fences(&self, fences: Vec<dyn Fence>);
+
+    /// Resets all the provided fences to an unsignalled state
+    ///
+    /// # Parameters
+    ///
+    /// * `fences` - The fences to reset
+    fn reset_fences(&self, fences: Vec<dyn Fence>);
+
     /// Executes the provided DescriptorSetWrites on this device
     /// 
     /// # Parameters
     /// 
-    /// - `updates` - The DescriptorSetWrites to execute
+    /// * `updates` - The DescriptorSetWrites to execute
     fn update_descriptor_sets(&self, updates: Vec<DescriptorSetWrite>);
 }
 
