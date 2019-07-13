@@ -28,8 +28,8 @@ pub trait PhysicalDevice {
     /// Devices are suitable for Nova if they
     /// - Have queues that support graphics, compute, transfer, and present operations
     /// - Support tessellation and geometry shaders
-    ///
     /// Nova's supported APIs have very different ways to check what features and capabilities a
+    ///
     /// physical device has, so this method encapsulates all that
     ///
     /// Future work will probably come up with a way to score physical devices from most suitable to
@@ -77,15 +77,15 @@ pub trait Device {
         allowed_objects: ObjectType,
     ) -> Result<dyn Memory, AllocationError>;
 
-    /// Creates a new CommandPool
+    /// Creates a new CommandAllocator
     ///
     /// # Parameters
     ///
-    /// * `create_info` - Information about how you want the CommandPool created
+    /// * `create_info` - Information about how you want the CommandAllocator created
     fn create_command_allocator(
         &self,
         create_info: CommandAllocatorCreateInfo,
-    ) -> Result<dyn CommandPool, CommandPoolCreateError>;
+    ) -> Result<dyn CommandPool, CommandAllocatorCreateError>;
 
     /// Creates a new renderpass from the provided shaderpack data
     ///
@@ -212,7 +212,7 @@ pub trait Memory {
     fn create_buffer(&self, create_info: BufferCreateInfo) -> Result<dyn Buffer, BufferCreateError>;
 }
 
-pub trait CommandPool {}
+pub trait CommandAllocator {}
 
 /// A pool of descriptors
 pub trait DescriptorPool {
