@@ -1,3 +1,18 @@
+pub enum PhysicalDeviceManufacturer {
+    Nvidia,
+    AMD,
+    Intel,
+    Other
+}
+
+pub enum PhysicalDeviceType {
+    Integrated,
+    Discreet,
+    Virtual,
+    CPU,
+    Other
+}
+
 /// How a piece of memory will be used
 pub enum MemoryUsage {
     /// The memory will only be used by device

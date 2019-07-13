@@ -1,28 +1,29 @@
 //! Nova's Render Hardware Interface
 //! 
-//! This is an interface to the GPU which has been designed for Nova. It abstracts away parts of the underlying APIs 
-//! which Nova doesn't use, providing an interface that's more productive and more fun. The RHI is actually split into
-//! two sections: the synchronous parts and the asynchronous part. The synchronous part of the API is where your calls
-//! happen immediately on the GPU, while the asynchronous part is where your calls get recorded into command lists, 
-//! which are later executed on the GPU
+//! This is an interface to the GPU which has been designed for Nova. It abstracts away parts of the
+//! underlying APIs which Nova doesn't use, providing an interface that's more productive and more
+//! fun. The RHI is actually split into two sections: the synchronous parts and the asynchronous
+//! part. The synchronous part of the API is where your calls happen immediately on the GPU, while
+//! the asynchronous part is where your calls get recorded into command lists, which are later
+//! executed on the GPU
 
 use std::collections::HashMap;
 
 use super::rhi_structs::*;
 use super::rhi_enums::*;
 
-/// An implementation of the rendering API. This will probably be a GPU card, but a software implementation of either 
-/// Vulkan or Direct3D 12 is possible
-pub trait PhysicalDevice {
-    /// Initializes a PhysicalDevice, creating it from the graphics API
-    /// 
-    /// # Parameters
-    /// 
-    /// * `create_info` - Information about how you want the PhysicalDevice to be created
-    fn new(create_info: PhysicalDeviceCreateInfo) -> Self;
+/// Top-level trait for functions that don't belong to any specific device object
+pub trait GraphicsAPI {
+    /// Gets a list of all available graphics adapters
+    fn get_adapters() -> Vec<dyn PhysicalDevice>;
+}
 
-    /// Retrieves information about the PhysicalDevice
-    fn get_info(&self) -> PhysicalDeviceInfo;
+/// An implementation of the rendering API. This will probably be a GPU card, but a software
+/// implementation of either Vulkan or Direct3D 12 is possible
+pub trait PhysicalDevice {
+    fn get_properties(&self) -> PhysicalDeviceProperties;
+
+    fn supports_all_queue_types(&self) -> bool;
 
     /// Creates a new logical Device
     /// 
@@ -35,11 +36,13 @@ pub trait PhysicalDevice {
 
 /// The logical device that we're rendering with
 /// 
-/// There may be multiple Devices in existence at once. Nova will eventually support multi-GPU rendering
+/// There may be multiple Devices in existence at once. Nova will eventually support multi-GPU
+/// rendering
 pub trait Device {
     /// Retrieves the Queue with the provided queue family index and queue index
     /// 
-    /// The caller should verify that the device supports the requested queue index and queue family index
+    /// The caller should verify that the device supports the requested queue index and queue
+    /// family index
     /// 
     /// # Parameters
     /// 
@@ -55,7 +58,8 @@ pub trait Device {
     /// 
     /// * `size` - The size, in bytes, of the memory you want to allocate
     /// * `memory_usage` - The usage you want the memory to be usable for
-    /// * `allowed_objects` - The types of objects you want to allow from this memory. Enforcing this is up to the caller
+    /// * `allowed_objects` - The types of objects you want to allow from this memory. Enforcing
+    /// this is up to the caller
     fn allocate_memory(&self, size: u64, memory_usage: MemoryUsage, allowed_objects: ObjectType) -> Result<dyn Memory, AllocationError>;
 
     /// Creates a new CommandPool
@@ -74,8 +78,9 @@ pub trait Device {
 
     /// Creates a new Framebuffer
     /// 
-    /// Framebuffers get their attachment layout from a renderpass. I do not know why Khronos didn't make a separate 
-    /// type for a framebuffer interace, yet here we are. Thus, this method takes in the renderpass to use an interface
+    /// Framebuffers get their attachment layout from a renderpass. I do not know why Khronos didn't
+    /// make a separate type for a framebuffer interface, yet here we are. Thus, this method takes in
+    /// the renderpass to use an interface
     /// 
     /// # Parameters
     /// 
@@ -89,7 +94,7 @@ pub trait Device {
     /// # Parameters
     /// 
     /// * `bindings` - The bindings that the pipeline exposes
-    /// * `color_attachemts` - All the color attachments that the pipline writes to
+    /// * `color_attachments` - All the color attachments that the pipeline writes to
     /// * `depth_texture` - The depth texture that this pipeline writes to, if it writes to one
     fn create_pipeline_interface(&self, bindings: &HashMap<String, ResourceBindingDescription>, color_attachments: &Vec<TextureAttachmentInfo>,
                                  depth_texture: &Option<TextureAttachmentInfo>) -> Result<dyn PipelineInterface, PipelineInterfaceCreateError>;
@@ -116,7 +121,7 @@ pub trait Device {
     /// 
     /// # Parameters
     /// 
-    /// * `create_info` - The ImageCrreateInfo to create the image from
+    /// * `create_info` - The ImageCreateInfo to create the image from
     fn create_image(&self, create_info: ImageCreateInfo) -> Result<dyn Image, ImageCreateError>;
 
     /// Creates a new Semaphore
