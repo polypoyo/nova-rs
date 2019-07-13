@@ -9,7 +9,14 @@ mod rhi_enums;
 mod rhi_structs;
 mod rhi_traits;
 
+mod vulkan {
+    pub mod vulkan_graphics_api;
+}
+
 // Re-exports
 pub use rhi_enums::*;
 pub use rhi_structs::*;
 pub use rhi_traits::*;
+
+// Re-export entry points each supported API
+pub use vulkan::vulkan_graphics_api::VulkanGraphicsAPI;
