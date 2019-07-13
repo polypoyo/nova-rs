@@ -82,9 +82,9 @@ pub trait Device {
     /// # Parameters
     ///
     /// * `create_info` - Information about how you want the CommandPool created
-    fn create_command_pool(
+    fn create_command_allocator(
         &self,
-        create_info: CommandPoolCreateInfo,
+        create_info: CommandAllocatorCreateInfo,
     ) -> Result<dyn CommandPool, CommandPoolCreateError>;
 
     /// Creates a new renderpass from the provided shaderpack data
@@ -227,7 +227,8 @@ pub trait DescriptorPool {
 pub trait Buffer {
     /// Writes data to the specified region of this buffer
     ///
-    /// Note: buffers you call this method on must _not_ be device local, because they must be CPU-addressable
+    /// Note: buffers you call this method on must _not_ be device local, because they must be
+    /// CPU-addressable
     ///
     /// # Parameters
     ///
