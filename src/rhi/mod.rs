@@ -5,7 +5,9 @@
 //! management. The RHI will be implemented by at least Vulkan and Direct3D 12. I'd like to eventually also support 
 //! Metal, but there's a lot to do before then
 
-mod rhi;
+mod rhi_enums;
+mod rhi_structs;
+mod rhi_traits;
 
 // Re-exports
 pub use rhi_enums::*;
