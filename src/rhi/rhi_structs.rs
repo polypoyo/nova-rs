@@ -10,9 +10,9 @@ pub struct CommandAllocatorCreateInfo {
 }
 
 /// Information about a physical device!
-/// 
+///
 /// This information can come from multiple API calls, but I've merged all the information together here
-/// 
+///
 /// This structure has things like the capabilities of the device, its hardware limits, its manufacturer and model
 /// number, etc
 pub struct PhysicalDeviceProperties {
@@ -26,4 +26,3 @@ pub struct PhysicalDeviceProperties {
 
     max_color_attachments: u32,
 }
-
