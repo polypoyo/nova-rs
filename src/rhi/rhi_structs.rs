@@ -1,5 +1,10 @@
 use super::rhi_enums::CommandListType;
 
+/// Describes how to create a logical device
+pub struct LogicalDeviceCreateInfo {
+
+}
+
 /// Describes what kind of command allocator you want to create
 pub struct CommandAllocatorCreateInfo {
     /// The type of command lists which will be allocated by this command allocator
@@ -18,11 +23,12 @@ pub struct CommandAllocatorCreateInfo {
 pub struct PhysicalDeviceProperties {
     manufacturer: PhysicalDeviceManufacturer,
 
-    deviceId: u32,
+    device_id: u32,
 
-    deviceName: str,
+    device_name: str,
 
-    deviceType: PhysicalDeviceType;
+    device_type: PhysicalDeviceType,
 
-    maxColorAttachments: u32,
+    max_color_attachments: u32,
 }
+
