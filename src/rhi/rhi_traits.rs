@@ -10,7 +10,7 @@ use std::collections::HashMap;
 
 /// An implementation of the rendering API. This will probably be a GPU card, but a software implementation of either 
 /// Vulkan or Direct3D 12 is possible
-trait PhysicalDevice {
+pub trait PhysicalDevice {
     /// Initializes a PhysicalDevice, creating it from the graphics API
     /// 
     /// # Parameters
@@ -33,7 +33,7 @@ trait PhysicalDevice {
 /// The logical device that we're rendering with
 /// 
 /// There may be multiple Devices in existence at once. Nova will eventually support multi-GPU rendering
-trait Device {
+pub trait Device {
     /// Retrieves the Queue with the provided queue family index and queue index
     /// 
     /// The caller should verify that the device supports the requested queue index and queue family index
@@ -67,7 +67,7 @@ trait Device {
     /// # Parameters
     /// 
     /// * `data` - The shaderpack data to create the renderpass from
-    fn create_renderpass(&self, data: ShaderpackData) -> Option<RenderPass>;
+    fn create_renderpass(&self, data: RenderpassData) -> Option<RenderPass>;
 
     /// Creates a new Framebuffer
     /// 
@@ -144,7 +144,7 @@ trait Device {
     fn update_descriptor_sets(&self, updates: Vec<DescriptorSetWrite>);
 }
 
-trait Memory {
+pub trait Memory {
     /// Creates a buffer from this memory
     /// 
     /// It's the caller's responsibility to make sure that this memory is allowed to create buffers
@@ -155,11 +155,11 @@ trait Memory {
     fn create_buffer(&self, create_info: BufferCreateInfo) -> Result<Buffer, BufferCreateError>;
 }
 
-trait CommandPool {
+pub trait CommandPool {
 }
 
 /// A pool of descriptors
-trait DescriptorPool {
+pub trait DescriptorPool {
     /// Creates DescriptorSets from the provided PipelineInterface
     /// 
     /// # Parameters
@@ -168,7 +168,7 @@ trait DescriptorPool {
     fn create_descriptor_sets(&self, pipeline_interface: PipelineInterface) -> Vec<DescriptorSet>;
 }
 
-trait Buffer {
+pub trait Buffer {
     /// Writes data to the specified region of this buffer
     /// 
     /// Note: buffers you call this method on must _not_ be device local, because they must be CPU-addressable
