@@ -23,7 +23,7 @@ as small in scope as possible.
 * `[docs]` = documentation changes.
 * `[ide]` = changes to accommodate a particular ide
 * `[git]` = git specific changes (.gitignore etc).
-* `[*]` = (fill in * with the name) nova crate `nova-*`.
+* `[*]` = (fill in * with the name) nova crate `nova-*`. (ex. `nova-shaderpack` would be `[shaderpack]`) 
 * `[tools]` = changes to assorted tooling
 
 ## Merge Style
