@@ -8,6 +8,9 @@
 
 use std::collections::HashMap;
 
+use super::rhi_structs::*;
+use super::rhi_enums::*;
+
 /// An implementation of the rendering API. This will probably be a GPU card, but a software implementation of either 
 /// Vulkan or Direct3D 12 is possible
 pub trait PhysicalDevice {
@@ -27,7 +30,7 @@ pub trait PhysicalDevice {
     /// 
     /// * `create_info` - Information about how you want the Device to be created
     // TODO: Maybe consume self?
-    fn create_logical_device(&self, create_info: LogicalDeviceCreateInfo) -> Result<Device, DeviceCreationError>;
+    fn create_logical_device(&self, create_info: LogicalDeviceCreateInfo) -> Result<dyn Device, DeviceCreationError>;
 }
 
 /// The logical device that we're rendering with
@@ -42,7 +45,7 @@ pub trait Device {
     /// 
     /// * `queue_family_index` - The queue family index to get a queue from
     /// * `queue_index` - The index of the queue to get from the selected queue family
-    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<Queue, QueueGettingError>;
+    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<dyn Queue, QueueGettingError>;
 
     /// Allocates memory from the graphics API
     /// 
@@ -53,21 +56,21 @@ pub trait Device {
     /// * `size` - The size, in bytes, of the memory you want to allocate
     /// * `memory_usage` - The usage you want the memory to be usable for
     /// * `allowed_objects` - The types of objects you want to allow from this memory. Enforcing this is up to the caller
-    fn allocate_memory(&self, size: u64, memory_usage: MemoryUsage, allowed_objects: ObjectType) -> Result<Memory, AllocationError>;
+    fn allocate_memory(&self, size: u64, memory_usage: MemoryUsage, allowed_objects: ObjectType) -> Result<dyn Memory, AllocationError>;
 
     /// Creates a new CommandPool
     /// 
     /// # Parameters
     /// 
     /// * `create_info` - Information about how you want the CommandPool created
-    fn create_command_pool(&self, create_info: CommandPoolCreateInfo) -> Result<CommandPool, CommandPoolCreationError>;
+    fn create_command_pool(&self, create_info: CommandPoolCreateInfo) -> Result<dyn CommandPool, CommandPoolCreateError>;
 
     /// Creates a new renderpass from the provided shaderpack data
     /// 
     /// # Parameters
     /// 
     /// * `data` - The shaderpack data to create the renderpass from
-    fn create_renderpass(&self, data: RenderpassData) -> Option<RenderPass>;
+    fn create_renderpass(&self, data: RenderpassData) -> Result<dyn RenderPass, RenderPassCreateError>;
 
     /// Creates a new Framebuffer
     /// 
@@ -79,7 +82,7 @@ pub trait Device {
     /// * `renderpass` - The RenderPass to get the framebuffer layout from
     /// * `attachments` - The images to attach to the framebuffer, in attachment order
     /// * `framebuffer_size` - The size of the framebuffer, in pixels
-    fn create_framebuffer(&self, renderpass: RenderPass, attachments: Vec<Image>, framebuffer_size: Vec2) -> Result<Framebuffer, FramebufferCreateError>;
+    fn create_framebuffer(&self, renderpass: dyn RenderPass, attachments: Vec<dyn Image>, framebuffer_size: Vec2) -> Result<dyn Framebuffer, FramebufferCreateError>;
 
     /// Creates a PipelineInterface from the provided information
     /// 
@@ -89,7 +92,7 @@ pub trait Device {
     /// * `color_attachemts` - All the color attachments that the pipline writes to
     /// * `depth_texture` - The depth texture that this pipeline writes to, if it writes to one
     fn create_pipeline_interface(&self, bindings: &HashMap<String, ResourceBindingDescription>, color_attachments: &Vec<TextureAttachmentInfo>,
-                                 depth_texture: &Option<TextureAttachmentInfo>) -> Result<PipelineInterface, PipelineInterfaceCreationError>;
+                                 depth_texture: &Option<TextureAttachmentInfo>) -> Result<dyn PipelineInterface, PipelineInterfaceCreateError>;
 
     /// Creates a DescriptorPool with the desired descriptors
     /// 
@@ -99,7 +102,7 @@ pub trait Device {
     /// * `num_samplers` - The number of sampler descriptors you'll make from the pool
     /// * `num_uniform_buffers` - The number of UBO/CBV or SSBO/UAV descriptors you'll make from the pool
     fn create_descriptor_pool(&self, num_sampled_images: u32, num_samplers: u32, num_uniform_buffers: u32)
-        -> Result<Vec<DescriptorPool>, DescriptorPoolCreateError>;
+        -> Result<Vec<dyn DescriptorPool>, DescriptorPoolCreateError>;
 
     /// Creates a Pipeline with the provided PipelineInterface and the given PipelineCreateInfo
     /// 
@@ -107,34 +110,34 @@ pub trait Device {
     /// 
     /// * `pipeline_interface` - The interface you want the new pipeline to have
     /// * `create_info` - The information to create a pipeline from
-    fn create_pipeline(&self, pipeline_interface: PipelineInterface, create_info: PipelineCreateInfo) -> Result<Pipeline, PipelineCreationError>;
+    fn create_pipeline(&self, pipeline_interface: dyn PipelineInterface, create_info: PipelineCreateInfo) -> Result<dyn Pipeline, PipelineCreateError>;
 
     /// Creates an Image from the specified ImageCreateInto
     /// 
     /// # Parameters
     /// 
     /// * `create_info` - The ImageCrreateInfo to create the image from
-    fn create_image(&self, create_info: ImageCreateInfo) -> Result<Image, ImageCreateError>;
+    fn create_image(&self, create_info: ImageCreateInfo) -> Result<dyn Image, ImageCreateError>;
 
     /// Creates a new Semaphore
-    fn create_semaphore(&self) -> Result<Semaphore, SemaphoreCreateError>;
+    fn create_semaphore(&self) -> Result<dyn Semaphore, SemaphoreCreateError>;
 
     /// Creates the specified number of Semaphores
     /// 
     /// # Parameters
     /// 
     /// * `count` - The number of semaphores to create
-    fn create_semaphores(&self, count: u32) -> Result<Vec<Semaphore>, SemaphoreCreateError>;
+    fn create_semaphores(&self, count: u32) -> Result<Vec<dyn Semaphore>, SemaphoreCreateError>;
 
     /// Creates a new Fence
-    fn create_fence(&self) -> Result<Fence, FenceCreateError>;
+    fn create_fence(&self) -> Result<dyn Fence, FenceCreateError>;
 
     /// Creates the specified number of Fences
     /// 
     /// # Parameters
     /// 
     /// * `count` - The number of fences to create
-    fn create_fences(&self, count: u32) -> Result<Vec<Fence>, FenceCreateError>;
+    fn create_fences(&self, count: u32) -> Result<Vec<dyn Fence>, FenceCreateError>;
 
     /// Executes the provided DescriptorSetWrites on this device
     /// 
@@ -152,7 +155,7 @@ pub trait Memory {
     /// # Parameters 
     /// 
     /// * `create_info` - The BufferCreateInfo to create the new buffer from
-    fn create_buffer(&self, create_info: BufferCreateInfo) -> Result<Buffer, BufferCreateError>;
+    fn create_buffer(&self, create_info: BufferCreateInfo) -> Result<dyn Buffer, BufferCreateError>;
 }
 
 pub trait CommandPool {
@@ -165,7 +168,7 @@ pub trait DescriptorPool {
     /// # Parameters
     /// 
     /// * `pipeline_interface` - The PipelineInterface to create the descriptors from
-    fn create_descriptor_sets(&self, pipeline_interface: PipelineInterface) -> Vec<DescriptorSet>;
+    fn create_descriptor_sets(&self, pipeline_interface: PipelineInterface) -> Vec<dyn DescriptorSet>;
 }
 
 pub trait Buffer {
