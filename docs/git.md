@@ -14,6 +14,7 @@ one particular module. This module should be one of the following. If
 a change could fall under multiple, it should be split up to keep commits
 as small in scope as possible.
 
+* `[all]` = affects many different modules/crates
 * `[cargo]` = changes to the build
 * `[ci]` = CI on all platforms.
   * `[ci-nix]` = CI on Mac and Linux.
@@ -23,7 +24,7 @@ as small in scope as possible.
 * `[docs]` = documentation changes.
 * `[ide]` = changes to accommodate a particular ide
 * `[git]` = git specific changes (.gitignore etc).
-* `[*]` = (fill in * with the name) nova crate `nova-*`. (ex. `nova-shaderpack` would be `[shaderpack]`) 
+* `[*]` = (fill in * with the name) nova module `nova-*`. (ex. `nova-shaderpack` would be `[shaderpack]`) 
 * `[tools]` = changes to assorted tooling
 
 ## Merge Style
