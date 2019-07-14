@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+
+hooks_diff="$(git diff HEAD -- tools/git-hooks)"
+installed_revision="$(cat .git/hooks/hooks-revision)"
+source_revision="$(cat tools/git-hooks/hooks-revision)"
+if [[ -n "${hooks_diff}" ]] || [[ "${installed_revision}" != "${source_revision}" ]]; then
+    echo -e "\e[32;1mDetected update in tools/hooks, marking dirty and installing new hooks\e[0m"
+    rm .git/hooks/* # TODO: This could fail on Windows since we are in the pre-commit hook, somebody confirm this
+    touch .git/hooks/.dirty
+    cp tools/git-hooks/* .git/hooks
+fi
