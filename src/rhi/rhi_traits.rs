@@ -252,6 +252,8 @@ pub trait DescriptorPool {
     fn create_descriptor_sets(&self, pipeline_interface: Self::PipelineInterface) -> Vec<Self::DescriptorSet>;
 }
 
+pub trait Resource {}
+
 pub trait Buffer {
     /// Writes data to the specified region of this buffer
     ///
@@ -298,6 +300,7 @@ pub trait CommandList {
     type Pipeline: Pipeline;
     type DescriptorSet: DescriptorSet;
     type PipelineInterface: PipelineInterface;
+    type Resource: Resource;
 
     /// Records resource barriers which happen after all the stages in the `stages_before_barrier`
     /// bitmask, and before all the stages in the `stages_after_barrier` bitmask
@@ -310,7 +313,7 @@ pub trait CommandList {
     fn resource_barriers(
         stages_before_barrier: PipelineStageFlags,
         stages_after_barrier: PipelineStageFlags,
-        barriers: Vec<ResourceBarrier>,
+        barriers: Vec<ResourceBarrier<Self::Resource>>,
     );
 
     /// Records a command to copy data from one buffer to another

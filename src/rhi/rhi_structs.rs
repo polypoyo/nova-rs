@@ -1,4 +1,5 @@
 use super::rhi_enums::*;
+use super::rhi_traits::Resource;
 
 /// Describes what kind of command allocator you want to create
 pub struct CommandAllocatorCreateInfo {
@@ -25,4 +26,27 @@ pub struct PhysicalDeviceProperties {
     device_type: PhysicalDeviceType,
 
     max_color_attachments: u32,
+}
+
+enum ResourceSpecificData {
+    Image{aspect: ImageAspectFlags},
+    Buffer{offset: u64, size: u64}
+}
+
+pub struct ResourceBarrier<R: Resource> {
+    resource: *R,
+
+    initial_state: ResourceState,
+
+    final_state: ResourceState,
+
+    access_before_barrier: ResourceAccessFlags,
+
+    access_after_barrier: ResourceAccessFlags,
+
+    source_queue: QueueType,
+
+    destination_queue: QueueType,
+
+    resource_info: ResourceSpecificData,
 }
