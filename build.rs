@@ -27,7 +27,7 @@ fn install_git_hooks() {
 
         for file in read_dir(shipped_hooks_path).expect("Failed to read tools hooks dir") {
             let file = file.expect("Failed to get file in tools hooks dir");
-            println!("cargo:rerun-if-changed:{}", file.path().to_str().unwrap());
+            println!("cargo:rerun-if-changed={}", file.path().to_str().unwrap());
             let target = git_hooks_path.join(file.file_name());
             copy(file.path(), &target).expect("Failed to copy file to git hooks dir");
         }
