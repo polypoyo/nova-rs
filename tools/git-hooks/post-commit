@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-hooks_diff="$(git diff HEAD -- tools/hooks)"
-if [[ -z "${hooks_diff}" ]]; then
-    git_rev="$(git rev-parse HEAD)"
-    echo "${git_rev}" > tools/hooks-revision
-    echo -e "\e[37;1mTools revision updated to ${git_rev}\e[0m"
+set -e
+
+if [[ -f ".git/hooks/.dirty" ]]; then
+    git_rev=$(git rev-parse HEAD)
+    rm .git/hooks/.dirty
+    echo "${git_rev}" > .git/hooks/hooks-revision
+    echo -e "\e[32;1mUpdated git hooks revision to \e[33;1m${git_rev}\e[0m"
 fi
