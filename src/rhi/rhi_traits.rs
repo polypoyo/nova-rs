@@ -193,7 +193,6 @@ pub trait Device {
 
     /// Creates a new Fence
     fn create_fence(&self) -> Result<Self::Fence, MemoryError>;
-
     /// Creates the specified number of Fences
     ///
     /// # Parameters
