@@ -57,7 +57,7 @@ pub trait Device {
     type Memory: Memory;
     type CommandAllocator: CommandAllocator;
     type Image: Image;
-    type RenderPass: RenderPass;
+    type Renderpass: Renderpass;
     type Framebuffer: Framebuffer;
     type PipelineInterface: PipelineInterface;
     type DescriptorPool: DescriptorPool;
@@ -108,7 +108,7 @@ pub trait Device {
     /// # Parameters
     ///
     /// * `data` - The shaderpack data to create the renderpass from
-    fn create_renderpass(&self, data: RenderpassData) -> Result<Self::RenderPass, MemoryError>;
+    fn create_renderpass(&self, data: RenderpassData) -> Result<Self::Renderpass, MemoryError>;
 
     /// Creates a new Framebuffer
     ///
@@ -118,12 +118,12 @@ pub trait Device {
     ///
     /// # Parameters
     ///
-    /// * `renderpass` - The RenderPass to get the framebuffer layout from
+    /// * `renderpass` - The Renderpass to get the framebuffer layout from
     /// * `attachments` - The images to attach to the framebuffer, in attachment order
     /// * `framebuffer_size` - The size of the framebuffer, in pixels
     fn create_framebuffer(
         &self,
-        renderpass: Self::RenderPass,
+        renderpass: Self::Renderpass,
         attachments: Vec<Self::Image>,
         framebuffer_size: Vec2,
     ) -> Result<Self::Framebuffer, MemoryError>;
@@ -219,6 +219,27 @@ pub trait Device {
     fn update_descriptor_sets(&self, updates: Vec<DescriptorSetWrite>);
 }
 
+pub trait Queue {
+    type CommandList: CommandList;
+    type Fence: Fence;
+    type Semaphore: Semaphore;
+
+    /// Submits a command list to this queue
+    ///
+    /// # Parameters
+    ///
+    /// * `commands` - The CommandList to submit to this queue
+    /// * `fence_to_signal` - The Fence to signal after the CommandList has finished executing
+    /// * `wait_semaphores` The semaphores to wait for before executing the CommandList
+    /// * `signal_semaphores` - The semaphores to signal when the CommandList has finished executing
+    fn submit_commands(
+        commands: Self::CommandList,
+        fence_to_signal: Self::Fence,
+        wait_semaphores: Vec<Self::Semaphore>,
+        signal_semaphores: Vec<Self::Semaphore>,
+    );
+}
+
 /// A block of memory and an allocation strategy
 pub trait Memory {
     type Buffer: Buffer;
@@ -231,25 +252,6 @@ pub trait Memory {
     ///
     /// * `data` - The BufferData to create the new buffer from
     fn create_buffer(&self, data: BufferData) -> Result<Self::Buffer, MemoryError>;
-}
-
-pub trait CommandAllocator {
-    type CommandList: CommandList;
-
-    fn create_command_list() -> Result<Self::CommandList, CommandListCreationError>;
-}
-
-/// A pool of descriptors
-pub trait DescriptorPool {
-    type PipelineInterface: PipelineInterface;
-    type DescriptorSet: DescriptorSet;
-
-    /// Creates DescriptorSets from the provided PipelineInterface
-    ///
-    /// # Parameters
-    ///
-    /// * `pipeline_interface` - The PipelineInterface to create the descriptors from
-    fn create_descriptor_sets(&self, pipeline_interface: Self::PipelineInterface) -> Vec<Self::DescriptorSet>;
 }
 
 pub trait Resource {}
@@ -270,25 +272,39 @@ pub trait Buffer {
 
 pub trait Image {}
 
-pub trait Queue {
-    type CommandList: CommandList;
-    type Fence: Fence;
-    type Semaphore: Semaphore;
+pub trait Sampler {}
 
-    /// Submits a command list to this queue
+/// A pool of descriptors
+pub trait DescriptorPool {
+    type PipelineInterface: PipelineInterface;
+    type DescriptorSet: DescriptorSet;
+
+    /// Creates DescriptorSets from the provided PipelineInterface
     ///
     /// # Parameters
     ///
-    /// * `commands` - The CommandList to submit to this queue
-    /// * `fence_to_signal` - The Fence to signal after the CommandList has finished executing
-    /// * `wait_semaphores` The semaphores to wait for before executing the CommandList
-    /// * `signal_semaphores` - The semaphores to signal when the CommandList has finished executing
-    fn submit_commands(
-        commands: Self::CommandList,
-        fence_to_signal: Self::Fence,
-        wait_semaphores: Vec<Self::Semaphore>,
-        signal_semaphores: Vec<Self::Semaphore>,
-    );
+    /// * `pipeline_interface` - The PipelineInterface to create the descriptors from
+    fn create_descriptor_sets(&self, pipeline_interface: Self::PipelineInterface) -> Vec<Self::DescriptorSet>;
+}
+
+pub trait DescriptorSet {}
+
+pub trait Renderpass {}
+
+pub trait Framebuffer {}
+
+pub trait PipelineInterface {}
+
+pub trait Pipeline {}
+
+pub trait Semaphore {}
+
+pub trait Fence {}
+
+pub trait CommandAllocator {
+    type CommandList: CommandList;
+
+    fn create_command_list() -> Result<Self::CommandList, MemoryError>;
 }
 
 /// A CommandList is a sequence of commands which can be submitted to the GPU
@@ -313,7 +329,7 @@ pub trait CommandList {
     fn resource_barriers(
         stages_before_barrier: PipelineStageFlags,
         stages_after_barrier: PipelineStageFlags,
-        barriers: Vec<ResourceBarrier<Self::Resource>>,
+        barriers: Vec<ResourceBarrier>,
     );
 
     /// Records a command to copy data from one buffer to another

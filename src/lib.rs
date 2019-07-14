@@ -13,7 +13,6 @@ pub mod logging;
 pub mod settings;
 pub mod shaderpack;
 
-#[macro_use]
 extern crate bitflags;
 
 #[cfg(test)]

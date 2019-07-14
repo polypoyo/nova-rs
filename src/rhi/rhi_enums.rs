@@ -1,3 +1,6 @@
+#[macro_use]
+use bitflags::bitflags;
+
 pub enum PhysicalDeviceManufacturer {
     Nvidia,
     AMD,
@@ -39,8 +42,7 @@ pub enum ObjectType {
     Any,
 }
 
-/// The type of command list
-pub enum CommandListType {
+pub enum QueueType {
     Graphics,
     Compute,
     Copy,
@@ -129,56 +131,60 @@ pub enum ResourceState {
     TransferDestination,
 }
 
-bitfield! {
-    pub struct PipelineStageFlags(u32);
-    impl Debug;
-
-    u32;
-    pub top_of_pipe, set_top_of_pipe: 0;
-    pub draw_indirect, set_draw_indirect: 1;
-    pub vertex_input, set_vertex_input: 2;
-    pub vertex_shader, set_vertex_shader: 3;
-    pub tessellation_control_shader, set_tessellation_control_shader: 4;
-    pub tessellation_evaluation_shader, set_tessellation_evaluation_shader: 5;
-    pub geometry_shader, set_geometry_shader: 6;
-    pub fragment_shader, set_fragment_shader: 7;
-    pub early_fragment_tests, set_early_fragment_tests: 8;
-    pub late_fragment_tests, set_late_fragment_tests: 9;
-    pub color_attachment_output, set_color_attachment_output: 10;
-    pub compute_shader, set_compute_shader: 11;
-    pub transfer, set_transfer: 12;
-    pub bottom_of_pipe, set_bottom_of_pipe: 13;
-    pub host, set_host: 14;
-    pub all_graphics, set_all_graphics: 15;
-    pub all_commands, set_all_commands: 16;
-    pub shading_rate_image, set_shading_rate_image: 17;
-    pub ray_tracing_shader, set_ray_tracing_shader: 18;
-    pub acceleration_structure_build, set_acceleration_structure_build: 19;
-    pub task_shader, set_task_shader: 20;
-    pub mesh_shader, set_mesh_shader: 21;
-    pub fragment_density_process, set_fragment_density_process: 22;
+bitflags! {
+    pub struct PipelineStageFlags: u32 {
+        const TopOfPipe = 0x00000001;
+        const DrawIndirect = 0x00000002;
+        const VertexInput = 0x00000004;
+        const VertexShader = 0x00000008;
+        const TessellationControlShader = 0x00000010;
+        const TessellationEvaluationShader = 0x00000020;
+        const GeometryShader = 0x00000040;
+        const FragmentShader = 0x00000080;
+        const EarlyFragmentTests = 0x00000100;
+        const LateFragmentTests = 0x00000200;
+        const ColorAttachmentOutput = 0x00000400;
+        const ComputeShader = 0x00000800;
+        const Transfer = 0x00001000;
+        const BottomOfPipe = 0x00002000;
+        const Host = 0x00004000;
+        const AllGraphics = 0x00008000;
+        const AllCommands = 0x00010000;
+        const ShadingRateImage = 0x00400000;
+        const RayTracingShader = 0x00200000;
+        const AccelerationStructureBuild = 0x02000000;
+        const TaskShader = 0x00080000;
+        const MeshShader = 0x00100000;
+        const FragmentDensityProcess = 0x00800000;
+    }
 }
 
-bitfield! {
-    pub struct ResourceAccessFlags(u32);
-    impl Debug;
+bitflags! {
+    pub struct ResourceAccessFlags: u32 {
+        const NoFlags = 0x00000000;
+        const IndexReadBit = 0x00000002;
+        const VertexAttributeReadBit = 0x00000004;
+        const UniformReadBit = 0x00000008;
+        const InputAttachmentReadBit = 0x00000010;
+        const ShaderReadBit = 0x00000020;
+        const ShaderWriteBit = 0x00000040;
+        const ColorAttachmentReadBit = 0x00000080;
+        const ColorAttachmentWriteBit = 0x00000100;
+        const DepthStencilAttachmentReadBit = 0x00000200;
+        const DepthStencilAttachmentWriteBit = 0x00000400;
+        const TransferReadBit = 0x00000800;
+        const TransferWriteBit = 0x00001000;
+        const HostReadBit = 0x00002000;
+        const HostWriteBit = 0x00004000;
+        const MemoryReadBit = 0x00008000;
+        const MemoryWriteBit = 0x00010000;
+    }
+}
 
-    u32;
-    pub no_flags, set_no_flags, 0;
-    pub index_read_bit, set_index_read_bit, 1;
-    pub vertex_attribute_read_bit, set_vertex_attribute_read_bit, 2;
-    pub uniform_read_bit, set_uniform_read_bit, 3;
-    pub input_attachment_read_bit, set_input_attachment_read_bit, 4;
-    pub shader_read_bit, set_shader_read_bit, 5;
-    pub shader_write_bit, set_shader_write_bit, 6;
-    pub color_attachment_read_bit, set_color_attachment_read_bit, 7;
-    pub color_attachment_write_bit, set_color_attachment_write_bit, 8;
-    pub depth_stencil_attachment_read_bit, set_depth_stencil_attachment_read_bit, 9;
-    pub depth_stencil_attachment_write_bit, set_depth_stencil_attachment_write_bit, 10;
-    pub transfer_read_bit, set_transfer_read_bit, 11;
-    pub transfer_write_bit, set_transfer_write_bit, 12;
-    pub host_read_bit, set_host_read_bit, 13;
-    pub host_write_bit, set_host_write_bit, 14;
-    pub memory_read_bit, set_memory_read_bit, 15;
-    pub memory_write_bit, set_memory_write_bit, 16;
+bitflags! {
+    pub struct ImageAspectFlags: u32 {
+         const Color = 0x00000001;
+         const Depth = 0x00000002;
+         const Stencil = 0x00000004;
+    }
 }
