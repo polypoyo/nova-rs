@@ -549,5 +549,61 @@ pub trait CommandList {
     /// * `num_bytes` - The number of bytes to copy
     fn copy_buffer(destination_buffer: *Buffer, destination_offset: u64, source_buffer: *Buffer, source_offset: u64, num_bytes: u64);
 
+    /// Records a command to execute the provided command lists
+    ///
+    /// # Parameters
+    ///
+    /// * `lists` - The command lists to execute
+    fn execute_command_lists(lists: Vec<*CommandList>);
 
+    /// Records a command to begin a renderpass with a framebuffer
+    ///
+    /// # Parameters
+    ///
+    /// * `renderpass` - The renderpass to begin
+    /// * `framebuffer` - The framebuffer to begin the renderpass with
+    fn begin_renderpass(renderpass: *Renderpass, framebuffer: *Framebuffer);
+
+    /// Records a command to end the current renderpass
+    fn end_renderpass();
+
+    /// Binds a pipeline to the command list
+    ///
+    /// # Parameters
+    ///
+    /// * `pipeline` - The pipeline to bind
+    fn bind_pipeline(pipeline: *Pipeline);
+
+    /// Records a command to bind DescriptorSet to a PipelineInterface
+    ///
+    /// # Parameters
+    ///
+    /// * `descriptor_sets` - The DescriptorSets to bind
+    /// * `pipeline_interface` - The PipelineInterface to bind the descriptor sets to
+    fn bind_descriptor_sets(descriptor_sets: Vec<*DescriptorSet>, pipeline_interface: *PipelineInterface);
+
+    /// Records a command to bind vertex buffers
+    ///
+    /// Vertex buffers are always bound sequentially starting at binding 0
+    ///
+    /// # Parameters
+    ///
+    /// * `buffers` - The buffers to bind
+    fn bind_vertex_buffers(buffers: Vec<*Buffer>);
+
+    /// Binds an index buffer
+    ///
+    /// # Parameters
+    ///
+    /// * `buffer` - The buffer to bind as an index buffer
+    fn bind_index_buffer(buffer: *Buffer);
+
+    /// Records a drawcall to grab `num_indices` indices from the currently bound index buffer and
+    /// draw them `num_instances` times
+    ///
+    /// # Parameters
+    ///
+    /// * `num_indices` - The number of indices to draw from the currently bound index buffer
+    /// * `num_instances` - How many times to draw the mesh
+    fn draw_indexed_mesh(num_indices: u32, num_instances: u32);
 }
