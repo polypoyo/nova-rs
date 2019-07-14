@@ -7,9 +7,6 @@ use std::{
 };
 
 fn main() {
-    println!("cargo:rerun-if-changed=tools");
-    println!("cargo:rerun-if-changed=tools/git-hooks");
-
     let git_dir = Path::new(".git");
 
     if git_dir.exists() {
