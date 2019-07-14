@@ -22,7 +22,7 @@ pub trait GraphicsApi {
 
 /// An implementation of the rendering API. This will probably be a GPU card, but a software
 /// implementation of either Vulkan or Direct3D 12 is possible
-trait PhysicalDevice {
+pub trait PhysicalDevice {
     type Device: Device;
 
     fn get_properties(&self) -> PhysicalDeviceProperties;
@@ -175,7 +175,7 @@ pub trait Device {
     /// # Parameters
     ///
     /// * `data` - The ImageData to create the image from
-    fn create_image(&self, data: ImageData) -> Result<*Image, MemoryError>;
+    fn create_image(&self, data: ImageData) -> Result<Self::Image, MemoryError>;
 
     /// Creates a new Semaphore
     fn create_semaphore(&self) -> Result<Self::Semaphore, MemoryError>;
@@ -296,7 +296,7 @@ pub trait CommandList {
     type Buffer: Buffer;
     type CommandList: CommandList;
     type Renderpass: Renderpass;
-    type Framebuffer:Framebuffer;
+    type Framebuffer: Framebuffer;
     type Pipeline: Pipeline;
     type DescriptorSet: DescriptorSet;
     type PipelineInterface: PipelineInterface;
@@ -325,7 +325,13 @@ pub trait CommandList {
     /// * `source_buffer` - The buffer to read data from
     /// * `source_offset` - The number of bytes from the start of `source_buffer` to read data from
     /// * `num_bytes` - The number of bytes to copy
-    fn copy_buffer(destination_buffer: Self::Buffer, destination_offset: u64, source_buffer: Self::Buffer, source_offset: u64, num_bytes: u64);
+    fn copy_buffer(
+        destination_buffer: Self::Buffer,
+        destination_offset: u64,
+        source_buffer: Self::Buffer,
+        source_offset: u64,
+        num_bytes: u64,
+    );
 
     /// Records a command to execute the provided command lists
     ///

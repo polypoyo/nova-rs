@@ -1,9 +1,13 @@
-use super::super::{GraphicsAPI, PhysicalDevice};
+use super::super::GraphicsApi;
 
-pub struct VulkanGraphicsAPI {}
+use super::vulkan_physical_device::VulkanPhysicalDevice;
 
-impl GraphicsAPI for VulkanGraphicsAPI {
-    fn get_adapters() -> Vec<PhysicalDevice> {
+pub struct VulkanGraphicsApi {}
+
+impl GraphicsApi for VulkanGraphicsApi {
+    type PhysicalDevice = VulkanPhysicalDevice;
+
+    fn get_adapters() -> Vec<VulkanPhysicalDevice> {
         unimplemented!()
     }
 }

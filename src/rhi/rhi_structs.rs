@@ -1,5 +1,6 @@
 use super::rhi_enums::*;
 use super::rhi_traits::Resource;
+use std::sync::Arc;
 
 /// Describes what kind of command allocator you want to create
 pub struct CommandAllocatorCreateInfo {
@@ -29,12 +30,12 @@ pub struct PhysicalDeviceProperties {
 }
 
 enum ResourceSpecificData {
-    Image{aspect: ImageAspectFlags},
-    Buffer{offset: u64, size: u64}
+    Image { aspect: ImageAspectFlags },
+    Buffer { offset: u64, size: u64 },
 }
 
 pub struct ResourceBarrier<R: Resource> {
-    resource: *R,
+    resource: Arc<R>,
 
     initial_state: ResourceState,
 

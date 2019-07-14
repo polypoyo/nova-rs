@@ -10,7 +10,13 @@ mod rhi_structs;
 mod rhi_traits;
 
 mod vulkan {
+    // Only export the implementation of the GraphicsApi trait. Clients of Nova's RHI should only
+    // use the API-specific structs to create a GraphicsApi, and for no other reason
     pub mod vulkan_graphics_api;
+
+    // But we have to bring this into the mod.rs file so other code can use it
+
+    mod vulkan_physical_device;
 }
 
 // Re-exports
@@ -19,4 +25,4 @@ pub use rhi_structs::*;
 pub use rhi_traits::*;
 
 // Re-export entry points each supported API
-pub use vulkan::vulkan_graphics_api::VulkanGraphicsAPI;
+pub use vulkan::vulkan_graphics_api::VulkanGraphicsApi;
