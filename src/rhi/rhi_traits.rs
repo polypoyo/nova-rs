@@ -85,14 +85,14 @@ pub trait Device {
     fn create_command_allocator(
         &self,
         create_info: CommandAllocatorCreateInfo,
-    ) -> Result<dyn CommandPool, CommandAllocatorCreationError>;
+    ) -> Result<dyn CommandAllocator, MemoryError>;
 
     /// Creates a new renderpass from the provided shaderpack data
     ///
     /// # Parameters
     ///
     /// * `data` - The shaderpack data to create the renderpass from
-    fn create_renderpass(&self, data: RenderpassData) -> Result<dyn RenderPass, RenderPassCreateError>;
+    fn create_renderpass(&self, data: RenderpassData) -> Result<dyn RenderPass, MemoryError>;
 
     /// Creates a new Framebuffer
     ///
@@ -110,7 +110,7 @@ pub trait Device {
         renderpass: dyn RenderPass,
         attachments: Vec<dyn Image>,
         framebuffer_size: Vec2,
-    ) -> Result<dyn Framebuffer, FramebufferCreateError>;
+    ) -> Result<dyn Framebuffer, MemoryError>;
 
     /// Creates a PipelineInterface from the provided information
     ///
@@ -122,9 +122,9 @@ pub trait Device {
     fn create_pipeline_interface(
         &self,
         bindings: &HashMap<String, ResourceBindingDescription>,
-        color_attachments: &Vec<TextureAttachmentInfo>,
-        depth_texture: &Option<TextureAttachmentInfo>,
-    ) -> Result<dyn PipelineInterface, PipelineInterfaceCreateError>;
+        color_attachments: &Vec<TextureAttachmentData>,
+        depth_texture: &Option<TextureAttachmentData>,
+    ) -> Result<dyn PipelineInterface, MemoryError>;
 
     /// Creates a DescriptorPool with the desired descriptors
     ///
@@ -138,46 +138,48 @@ pub trait Device {
         num_sampled_images: u32,
         num_samplers: u32,
         num_uniform_buffers: u32,
-    ) -> Result<Vec<dyn DescriptorPool>, DescriptorPoolCreateError>;
+    ) -> Result<Vec<dyn DescriptorPool>, DescriptorPoolCreationError>;
 
     /// Creates a Pipeline with the provided PipelineInterface and the given PipelineCreateInfo
     ///
     /// # Parameters
     ///
     /// * `pipeline_interface` - The interface you want the new pipeline to have
-    /// * `create_info` - The information to create a pipeline from
+    /// * `data` - The data to create a pipeline from
     fn create_pipeline(
         &self,
         pipeline_interface: dyn PipelineInterface,
-        create_info: PipelineCreateInfo,
-    ) -> Result<dyn Pipeline, PipelineCreateError>;
+        data: PipelineData,
+    ) -> Result<dyn Pipeline, PipelineCreationError>;
 
     /// Creates an Image from the specified ImageCreateInto
     ///
+    /// Images are created directly from the Device and not from a MemoryPool because
+    ///
     /// # Parameters
     ///
-    /// * `create_info` - The ImageCreateInfo to create the image from
-    fn create_image(&self, create_info: ImageCreateInfo) -> Result<dyn Image, ImageCreateError>;
+    /// * `data` - The ImageData to create the image from
+    fn create_image(&self, data: ImageData) -> Result<dyn Image, MemoryError>;
 
     /// Creates a new Semaphore
-    fn create_semaphore(&self) -> Result<dyn Semaphore, SemaphoreCreateError>;
+    fn create_semaphore(&self) -> Result<dyn Semaphore, MemoryError>;
 
     /// Creates the specified number of Semaphores
     ///
     /// # Parameters
     ///
     /// * `count` - The number of semaphores to create
-    fn create_semaphores(&self, count: u32) -> Result<Vec<dyn Semaphore>, SemaphoreCreateError>;
+    fn create_semaphores(&self, count: u32) -> Result<Vec<dyn Semaphore>, MemoryError>;
 
     /// Creates a new Fence
-    fn create_fence(&self) -> Result<dyn Fence, FenceCreateError>;
+    fn create_fence(&self) -> Result<dyn Fence, MemoryError>;
 
     /// Creates the specified number of Fences
     ///
     /// # Parameters
     ///
     /// * `count` - The number of fences to create
-    fn create_fences(&self, count: u32) -> Result<Vec<dyn Fence>, FenceCreateError>;
+    fn create_fences(&self, count: u32) -> Result<Vec<dyn Fence>, MemoryError>;
 
     /// Waits for all the provided fences to be signalled
     ///
@@ -201,18 +203,32 @@ pub trait Device {
     fn update_descriptor_sets(&self, updates: Vec<DescriptorSetWrite>);
 }
 
-pub trait Memory {
+pub trait AllocationInfo {}
+
+pub trait AllocationStrategy {
+    fn allocate(&self, size: u64) -> dyn AllocationInfo;
+
+    fn free(&self, alloc: dyn AllocationInfo);
+}
+
+/// A block of memory and an allocation strategy
+pub trait Memory<AllocationStrategyImpl: AllocationStrategy> {
     /// Creates a buffer from this memory
     ///
     /// It's the caller's responsibility to make sure that this memory is allowed to create buffers
     ///
     /// # Parameters
     ///
-    /// * `create_info` - The BufferCreateInfo to create the new buffer from
-    fn create_buffer(&self, create_info: BufferCreateInfo) -> Result<dyn Buffer, BufferCreateError>;
+    /// * `data` - The BufferData to create the new buffer from
+    fn create_buffer(&self, data: BufferData, allocation: dyn AllocationInfo) -> Result<dyn Buffer, MemoryError>;
+
+    /// Determines the actual allocation for an object of a given size
+    fn calculate_allocation(size: u64) -> dyn AllocationInfo;
 }
 
-pub trait CommandAllocator {}
+pub trait CommandAllocator {
+    fn create_command_list() -> Result<dyn CommandList, CommandListCreationError>;
+}
 
 /// A pool of descriptors
 pub trait DescriptorPool {
@@ -221,7 +237,7 @@ pub trait DescriptorPool {
     /// # Parameters
     ///
     /// * `pipeline_interface` - The PipelineInterface to create the descriptors from
-    fn create_descriptor_sets(&self, pipeline_interface: PipelineInterface) -> Vec<dyn DescriptorSet>;
+    fn create_descriptor_sets(&self, pipeline_interface: dyn PipelineInterface) -> Vec<dyn DescriptorSet>;
 }
 
 pub trait Buffer {
@@ -236,4 +252,23 @@ pub trait Buffer {
     /// * `num_bytes` - The number of bytes of the data to write
     /// * `offset` - The offset in the buffer to where you want the data to be
     fn write_data(&self, data: BufferData, num_bytes: u64, offset: u64);
+}
+
+pub trait Image {}
+
+pub trait Queue {
+    /// Submits a command list to this queue
+    ///
+    /// # Parameters
+    ///
+    /// * `commands` - The CommandList to submit to this queue
+    /// * `fence_to_signal` - The Fence to signal after the CommandList has finished executing
+    /// * `wait_semaphores` The semaphores to wait for before executing the CommandList
+    /// * `signal_semaphores` - The semaphores to signal when the CommandList has finished executing
+    fn submit_commands(
+        commands: dyn CommandList,
+        fence_to_signal: dyn Fence,
+        wait_semaphores: Vec<dyn Semaphore>,
+        signal_semaphores: Vec<dyn Semaphore>,
+    );
 }

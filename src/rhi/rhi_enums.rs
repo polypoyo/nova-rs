@@ -52,6 +52,15 @@ pub enum DeviceCreationError {
     Failed,
 }
 
+/// A memory-related error
+pub enum MemoryError {
+    /// There's not enough host memory to create the requested object
+    OutOfHostMemory,
+
+    /// There's not enough device memory to create the requested object
+    OutOfDeviceMemory,
+}
+
 /// Errors tha can happen when you try to get a queue from a device
 pub enum QueueGettingError {
     /// The device does not have enough memory to get you the queue you want
@@ -72,11 +81,25 @@ pub enum AllocationError {
     InvalidExternalHandle,
 }
 
-/// All the errors that can happen when you try to create a command allocator
-pub enum CommandAllocatorCreationError {
-    /// There's not enough host memory to make the command allocator
+pub enum DescriptorPoolCreationError {
+    /// There's not enough host memory to create the descriptor pool
     OutOfHostMemory,
 
-    /// There's not enough device memory to make the command allocator
+    /// There's not enough device memory to create the descriptor pool
     OutOfDeviceMemory,
+
+    /// Memory is too fragmented to create the descriptor pool
+    Fragmentation,
+}
+
+pub enum PipelineCreationError {
+    /// There's not enough host memory to create the pipeline
+    OutOfHostMemory,
+
+    /// There's not enough device memory to create the pipeline
+    OutOfDeviceMemory,
+
+    /// One or more shaders failed to compile or link. If debug reports are enabled, details are
+    /// reported through a debug report
+    InvalidShader,
 }
