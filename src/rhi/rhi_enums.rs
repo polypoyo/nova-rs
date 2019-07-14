@@ -107,3 +107,10 @@ pub enum PipelineCreationError {
     /// reported through a debug report
     InvalidShader,
 }
+
+bitfield! {
+    pub struct PipelineStageFlags(u8);
+    impl Debug;
+
+
+}
