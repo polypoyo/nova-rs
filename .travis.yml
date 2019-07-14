@@ -1,18 +1,18 @@
 language: rust
 rust:
-  - stable
-  - beta
+#  - stable
+#  - beta
   - nightly
 
 os:
 #  - osx
   - linux
 
-matrix:
-  allow_failures:
-    - rust: beta
-    - rust: nightly
-  fast_finish: true
+#matrix:
+#  allow_failures:
+#    - rust: beta
+#    - rust: nightly
+#  fast_finish: true
 
 cache: cargo
 
