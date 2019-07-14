@@ -395,7 +395,6 @@ pub trait CommandList {
     ///
     /// * `buffers` - The buffers to bind
     fn bind_vertex_buffers(buffers: Vec<Self::Buffer>);
-
     /// Binds an index buffer
     ///
     /// # Parameters
