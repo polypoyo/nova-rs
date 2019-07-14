@@ -42,10 +42,14 @@ pub enum ObjectType {
 /// The type of command list
 pub enum CommandListType {
     /// Graphics command lists can
-    Primary,
-    Secondary,
+    Graphics,
     Compute,
     Copy,
+}
+
+pub enum CommandListLevel {
+    Primary,
+    Secondary,
 }
 
 pub enum DeviceCreationError {

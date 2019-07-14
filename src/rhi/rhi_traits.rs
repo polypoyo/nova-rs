@@ -15,7 +15,7 @@ use super::rhi_structs::*;
 /// Top-level trait for functions that don't belong to any specific device object
 pub trait GraphicsAPI {
     /// Gets a list of all available graphics adapters
-    fn get_adapters() -> Vec<dyn PhysicalDevice>;
+    fn get_adapters() -> Vec<*PhysicalDevice>;
 }
 
 /// An implementation of the rendering API. This will probably be a GPU card, but a software
@@ -41,7 +41,7 @@ pub trait PhysicalDevice {
     /// Nova has very specific requirements for a logical device, and how you express those
     /// requirements varies significantly by API. Thus, this method doesn't take a create info
     /// struct of any sort
-    fn create_logical_device(&self) -> Result<dyn Device, DeviceCreationError>;
+    fn create_logical_device(&self) -> Result<*Device, DeviceCreationError>;
 }
 
 /// The logical device that we're rendering with
@@ -58,7 +58,7 @@ pub trait Device {
     ///
     /// * `queue_family_index` - The queue family index to get a queue from
     /// * `queue_index` - The index of the queue to get from the selected queue family
-    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<dyn Queue, QueueGettingError>;
+    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<*Queue, QueueGettingError>;
 
     /// Allocates memory from the graphics API
     ///
@@ -70,12 +70,12 @@ pub trait Device {
     /// * `memory_usage` - The usage you want the memory to be usable for
     /// * `allowed_objects` - The types of objects you want to allow from this memory. Enforcing
     /// this is up to the caller
-    fn allocate_memory(
+    fn allocate_memory<T>(
         &self,
         size: u64,
         memory_usage: MemoryUsage,
         allowed_objects: ObjectType,
-    ) -> Result<dyn Memory, AllocationError>;
+    ) -> Result<*Memory<T>, AllocationError>;
 
     /// Creates a new CommandAllocator
     ///
@@ -85,14 +85,14 @@ pub trait Device {
     fn create_command_allocator(
         &self,
         create_info: CommandAllocatorCreateInfo,
-    ) -> Result<dyn CommandAllocator, MemoryError>;
+    ) -> Result<*CommandAllocator, MemoryError>;
 
     /// Creates a new renderpass from the provided shaderpack data
     ///
     /// # Parameters
     ///
     /// * `data` - The shaderpack data to create the renderpass from
-    fn create_renderpass(&self, data: RenderpassData) -> Result<dyn RenderPass, MemoryError>;
+    fn create_renderpass(&self, data: RenderpassData) -> Result<*RenderPass, MemoryError>;
 
     /// Creates a new Framebuffer
     ///
@@ -107,10 +107,10 @@ pub trait Device {
     /// * `framebuffer_size` - The size of the framebuffer, in pixels
     fn create_framebuffer(
         &self,
-        renderpass: dyn RenderPass,
-        attachments: Vec<dyn Image>,
+        renderpass: *RenderPass,
+        attachments: Vec<*Image>,
         framebuffer_size: Vec2,
-    ) -> Result<dyn Framebuffer, MemoryError>;
+    ) -> Result<*Framebuffer, MemoryError>;
 
     /// Creates a PipelineInterface from the provided information
     ///
@@ -124,7 +124,7 @@ pub trait Device {
         bindings: &HashMap<String, ResourceBindingDescription>,
         color_attachments: &Vec<TextureAttachmentData>,
         depth_texture: &Option<TextureAttachmentData>,
-    ) -> Result<dyn PipelineInterface, MemoryError>;
+    ) -> Result<*PipelineInterface, MemoryError>;
 
     /// Creates a DescriptorPool with the desired descriptors
     ///
@@ -138,7 +138,7 @@ pub trait Device {
         num_sampled_images: u32,
         num_samplers: u32,
         num_uniform_buffers: u32,
-    ) -> Result<Vec<dyn DescriptorPool>, DescriptorPoolCreationError>;
+    ) -> Result<Vec<*DescriptorPool>, DescriptorPoolCreationError>;
 
     /// Creates a Pipeline with the provided PipelineInterface and the given PipelineCreateInfo
     ///
@@ -148,9 +148,9 @@ pub trait Device {
     /// * `data` - The data to create a pipeline from
     fn create_pipeline(
         &self,
-        pipeline_interface: dyn PipelineInterface,
+        pipeline_interface: *PipelineInterface,
         data: PipelineData,
-    ) -> Result<dyn Pipeline, PipelineCreationError>;
+    ) -> Result<*Pipeline, PipelineCreationError>;
 
     /// Creates an Image from the specified ImageCreateInto
     ///
@@ -159,41 +159,41 @@ pub trait Device {
     /// # Parameters
     ///
     /// * `data` - The ImageData to create the image from
-    fn create_image(&self, data: ImageData) -> Result<dyn Image, MemoryError>;
+    fn create_image(&self, data: ImageData) -> Result<*Image, MemoryError>;
 
     /// Creates a new Semaphore
-    fn create_semaphore(&self) -> Result<dyn Semaphore, MemoryError>;
+    fn create_semaphore(&self) -> Result<*Semaphore, MemoryError>;
 
     /// Creates the specified number of Semaphores
     ///
     /// # Parameters
     ///
     /// * `count` - The number of semaphores to create
-    fn create_semaphores(&self, count: u32) -> Result<Vec<dyn Semaphore>, MemoryError>;
+    fn create_semaphores(&self, count: u32) -> Result<Vec<*Semaphore>, MemoryError>;
 
     /// Creates a new Fence
-    fn create_fence(&self) -> Result<dyn Fence, MemoryError>;
+    fn create_fence(&self) -> Result<*Fence, MemoryError>;
 
     /// Creates the specified number of Fences
     ///
     /// # Parameters
     ///
     /// * `count` - The number of fences to create
-    fn create_fences(&self, count: u32) -> Result<Vec<dyn Fence>, MemoryError>;
+    fn create_fences(&self, count: u32) -> Result<Vec<*Fence>, MemoryError>;
 
     /// Waits for all the provided fences to be signalled
     ///
     /// # Parameters
     ///
     /// * `fences` - All the fences to wait for
-    fn wait_for_fences(&self, fences: Vec<dyn Fence>);
+    fn wait_for_fences(&self, fences: Vec<*Fence>);
 
     /// Resets all the provided fences to an unsignalled state
     ///
     /// # Parameters
     ///
     /// * `fences` - The fences to reset
-    fn reset_fences(&self, fences: Vec<dyn Fence>);
+    fn reset_fences(&self, fences: Vec<*Fence>);
 
     /// Executes the provided DescriptorSetWrites on this device
     ///
@@ -206,9 +206,9 @@ pub trait Device {
 pub trait AllocationInfo {}
 
 pub trait AllocationStrategy {
-    fn allocate(&self, size: u64) -> dyn AllocationInfo;
+    fn allocate(&self, size: u64) -> *AllocationInfo;
 
-    fn free(&self, alloc: dyn AllocationInfo);
+    fn free(&self, alloc: *AllocationInfo);
 }
 
 /// A block of memory and an allocation strategy
@@ -220,14 +220,14 @@ pub trait Memory<AllocationStrategyImpl: AllocationStrategy> {
     /// # Parameters
     ///
     /// * `data` - The BufferData to create the new buffer from
-    fn create_buffer(&self, data: BufferData, allocation: dyn AllocationInfo) -> Result<dyn Buffer, MemoryError>;
+    fn create_buffer(&self, data: BufferData, allocation: *AllocationInfo) -> Result<*Buffer, MemoryError>;
 
     /// Determines the actual allocation for an object of a given size
-    fn calculate_allocation(size: u64) -> dyn AllocationInfo;
+    fn calculate_allocation(size: u64) -> *AllocationInfo;
 }
 
 pub trait CommandAllocator {
-    fn create_command_list() -> Result<dyn CommandList, CommandListCreationError>;
+    fn create_command_list() -> Result<*CommandList, CommandListCreationError>;
 }
 
 /// A pool of descriptors
@@ -237,7 +237,7 @@ pub trait DescriptorPool {
     /// # Parameters
     ///
     /// * `pipeline_interface` - The PipelineInterface to create the descriptors from
-    fn create_descriptor_sets(&self, pipeline_interface: dyn PipelineInterface) -> Vec<dyn DescriptorSet>;
+    fn create_descriptor_sets(&self, pipeline_interface: *PipelineInterface) -> Vec<*DescriptorSet>;
 }
 
 pub trait Buffer {
@@ -266,9 +266,39 @@ pub trait Queue {
     /// * `wait_semaphores` The semaphores to wait for before executing the CommandList
     /// * `signal_semaphores` - The semaphores to signal when the CommandList has finished executing
     fn submit_commands(
-        commands: dyn CommandList,
-        fence_to_signal: dyn Fence,
-        wait_semaphores: Vec<dyn Semaphore>,
-        signal_semaphores: Vec<dyn Semaphore>,
+        commands: *CommandList,
+        fence_to_signal: *Fence,
+        wait_semaphores: Vec<*Semaphore>,
+        signal_semaphores: Vec<*Semaphore>,
     );
+}
+
+/// A CommandList is a sequence of commands which can be submitted to the GPU
+pub trait CommandList {
+    /// Records resource barriers which happen after all the stages in the `stages_before_barrier`
+    /// bitmask, and before all the stages in the `stages_after_barrier` bitmask
+    ///
+    ///# Parameters
+    ///
+    /// * `stages_before_barrier` - The pipeline barrier will take place after all the stages in this bitmask
+    /// * `stages_after_barrier` - The pipeline barrier will take place before all the stages in this bitmask
+    /// * `barriers` - The resource barriers to record
+    fn resource_barriers(
+        stages_before_barrier: PipelineStageFlags,
+        stages_after_barrier: PipelineStageFlags,
+        barriers: Vec<ResourceBarrier>,
+    );
+
+    /// Records a command to copy data from one buffer to another
+    ///
+    /// # Parameters
+    ///
+    /// * `destination_buffer` - The buffer to write data to
+    /// * `destination_offset` - The number of bytes from the start of `destination_buffer` to write to
+    /// * `source_buffer` - The buffer to read data from
+    /// * `source_offset` - The number of bytes from the start of `source_buffer` to read data from
+    /// * `num_bytes` - The number of bytes to copy
+    fn copy_buffer(destination_buffer: *Buffer, destination_offset: u64, source_buffer: *Buffer, source_offset: u64, num_bytes: u64);
+
+
 }
