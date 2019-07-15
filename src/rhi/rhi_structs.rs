@@ -2,6 +2,8 @@ use super::{rhi_enums::*, rhi_traits::*};
 use crate::shaderpack;
 use std::sync::Arc;
 
+use super::super::shaderpack::*;
+
 /// Describes what kind of command allocator you want to create
 #[derive(Debug, Clone)]
 pub struct CommandAllocatorCreateInfo {

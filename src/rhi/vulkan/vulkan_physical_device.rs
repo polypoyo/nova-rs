@@ -52,9 +52,8 @@ impl PhysicalDevice for VulkanPhysicalDevice {
             .get_physical_device_queue_family_properties(self.phys_device);
 
         for props in queue_family_props {
-            let supports_present = self.phys_device.get_physical_device_surface_support_khr()
+            let supports_present = self.phys_device.get_physical_device_surface_support_khr();
             let supports_graphics = props.queue_flags | vk::QueueFlags::GRAPHICS;
-
         }
 
         true

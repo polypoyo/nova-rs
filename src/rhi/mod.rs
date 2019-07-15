@@ -26,3 +26,5 @@ pub use rhi_traits::*;
 
 // Re-export entry points each supported API
 pub use vulkan::vulkan_graphics_api::VulkanGraphicsApi;
+
+mod use super::shaderpack;

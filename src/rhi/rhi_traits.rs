@@ -259,8 +259,6 @@ pub trait Memory {
 
 pub trait Resource {}
 
-pub trait Resource {}
-
 pub trait Buffer {
     /// Writes data to the specified region of this buffer
     ///
@@ -333,7 +331,7 @@ pub trait CommandList {
     fn resource_barriers(
         stages_before_barrier: PipelineStageFlags,
         stages_after_barrier: PipelineStageFlags,
-        barriers: Vec<ResourceBarrier<Self::Resource>>,
+        barriers: Vec<ResourceBarrier>,
     );
 
     /// Records a command to copy data from one buffer to another
