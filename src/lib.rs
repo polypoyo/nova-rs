@@ -13,8 +13,6 @@ pub mod logging;
 pub mod settings;
 pub mod shaderpack;
 
-extern crate bitflags;
-
 #[cfg(test)]
 mod tests {
     #[test]
