@@ -97,15 +97,15 @@ struct ShaderpackResourceData {
 #[derive(Debug, Clone)]
 struct VertexFieldData {
     semantic_name: String,
-    field: VertexFieldEnum,
+    field: VertexField,
 }
 
 #[derive(Debug, Clone)]
 struct StencilOpState {
-    fail_op: StencilOpEnum,
-    pass_op: StencilOpEnum,
-    depth_fail_op: StencilOpEnum,
-    compare_op: StencilOpEnum,
+    fail_op: StencilOp,
+    pass_op: StencilOp,
+    depth_fail_op: StencilOp,
+    compare_op: StencilOp,
     compare_mask: u32,
     write_mask: u32,
 }
@@ -119,7 +119,7 @@ struct ShaderSource {
 #[derive(Debug, Clone, PartialEq)]
 struct TextureAttachmentInfo {
     name: String,
-    pixel_format: PixelFormatEnum,
+    pixel_format: PixelFormat,
     clear: bool,
 }
 
@@ -140,14 +140,14 @@ struct TextureCreateInfo {
 #[derive(Debug, Clone)]
 struct SamplerCreateInfo {
     name: String,
-    filter: TextureFilterEnum,
-    wrap_mode: WrapModeEnum,
+    filter: TextureFilter,
+    wrap_mode: WrapMode,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 struct TextureFormat {
-    pixel_format: PixelFormatEnum,
-    dimension_type: TextureDimensionTypeEnum,
+    pixel_format: PixelFormat,
+    dimension_type: TextureDimensionType,
     width: f32,
     height: f32,
 }
@@ -213,7 +213,7 @@ enum RenderQueue {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum VertexFieldEnum {
+enum VertexField {
     Position,
     Color,
     UV0,
@@ -226,7 +226,7 @@ enum VertexFieldEnum {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum StencilOpEnum {
+enum StencilOp {
     Keep,
     Zero,
     Replace,
@@ -238,7 +238,7 @@ enum StencilOpEnum {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum PixelFormatEnum {
+enum PixelFormat {
     RGBA8,
     RGBA16F,
     RGBA32F,
@@ -247,20 +247,20 @@ enum PixelFormatEnum {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum TextureFilterEnum {
+enum TextureFilter {
     TexelAA,
     Bilinear,
     Point,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum WrapModeEnum {
+enum WrapMode {
     Repeat,
     Clamp,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum TextureDimensionTypeEnum {
+enum TextureDimensionType {
     ScreenRelative,
     Absolute,
 }
