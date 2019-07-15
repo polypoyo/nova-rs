@@ -3,6 +3,7 @@ use crate::shaderpack;
 use std::sync::Arc;
 
 /// Describes what kind of command allocator you want to create
+#[derive(Debug, Clone)]
 pub struct CommandAllocatorCreateInfo {
     /// The type of command lists which will be allocated by this command allocator
     command_list_type: QueueType,
@@ -17,6 +18,7 @@ pub struct CommandAllocatorCreateInfo {
 ///
 /// This structure has things like the capabilities of the device, its hardware limits, its manufacturer and model
 /// number, etc
+#[derive(Debug, Clone)]
 pub struct PhysicalDeviceProperties {
     manufacturer: PhysicalDeviceManufacturer,
 
@@ -29,11 +31,13 @@ pub struct PhysicalDeviceProperties {
     max_color_attachments: u32,
 }
 
+#[derive(Debug, Clone)]
 pub enum ResourceSpecificData {
     Image { aspect: ImageAspectFlags },
     Buffer { offset: u64, size: u64 },
 }
 
+#[derive(Clone)]
 pub struct ResourceBarrier {
     resource: Arc<dyn Resource>,
 
@@ -52,6 +56,7 @@ pub struct ResourceBarrier {
     resource_info: ResourceSpecificData,
 }
 
+#[derive(Clone)]
 pub enum DescriptorUpdateInfo {
     Image {
         image: Arc<dyn Image>,
@@ -60,6 +65,7 @@ pub enum DescriptorUpdateInfo {
     },
 }
 
+#[derive(Clone)]
 pub struct DescriptorSetWrite {
     set: Arc<dyn DescriptorSet>,
 
@@ -68,6 +74,7 @@ pub struct DescriptorSetWrite {
     update_info: DescriptorUpdateInfo,
 }
 
+#[derive(Debug, Clone)]
 pub struct ResourceBindingDescription {
     /// Descriptor set that his binding belongs to
     set: u32,
@@ -85,6 +92,7 @@ pub struct ResourceBindingDescription {
     stages: ShaderStageFlags,
 }
 
+#[derive(Debug, Clone)]
 pub struct BufferCreateInfo {
     size: usize,
 
@@ -93,4 +101,5 @@ pub struct BufferCreateInfo {
     allocation: DeviceMemoryAllocation,
 }
 
+#[derive(Debug, Clone)]
 pub struct DeviceMemoryAllocation;

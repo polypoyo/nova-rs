@@ -1,5 +1,6 @@
 use bitflags::bitflags;
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum PhysicalDeviceManufacturer {
     Nvidia,
     AMD,
@@ -7,6 +8,7 @@ pub enum PhysicalDeviceManufacturer {
     Other,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum PhysicalDeviceType {
     Integrated,
     Discreet,
@@ -16,6 +18,7 @@ pub enum PhysicalDeviceType {
 }
 
 /// How a piece of memory will be used
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum MemoryUsage {
     /// The memory will only be used by device
     ///
@@ -33,6 +36,7 @@ pub enum MemoryUsage {
 }
 
 /// Describes what kind of object you want to allocate from a new memory pool
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum ObjectType {
     Buffer,
     Texture,
@@ -41,22 +45,26 @@ pub enum ObjectType {
     Any,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum QueueType {
     Graphics,
     Compute,
     Copy,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum CommandListLevel {
     Primary,
     Secondary,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum DeviceCreationError {
     Failed,
 }
 
 /// A memory-related error
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum MemoryError {
     /// There's not enough host memory to create the requested object
     OutOfHostMemory,
@@ -66,12 +74,14 @@ pub enum MemoryError {
 }
 
 /// Errors tha can happen when you try to get a queue from a device
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum QueueGettingError {
     /// The device does not have enough memory to get you the queue you want
     OutOfMemory,
 }
 
 /// All the errors you might get when allocating memory
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum AllocationError {
     /// There's not enough host memory to make the requested allocation
     OutOfHostMemory,
@@ -85,6 +95,7 @@ pub enum AllocationError {
     InvalidExternalHandle,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum DescriptorPoolCreationError {
     /// There's not enough host memory to create the descriptor pool
     OutOfHostMemory,
@@ -96,6 +107,7 @@ pub enum DescriptorPoolCreationError {
     Fragmentation,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum PipelineCreationError {
     /// There's not enough host memory to create the pipeline
     OutOfHostMemory,
@@ -109,6 +121,7 @@ pub enum PipelineCreationError {
 }
 
 /// The state a resource is in
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum ResourceState {
     /// The state is not defined. The GPU may or may not do _things_ with the resource
     Undefined,
@@ -130,12 +143,14 @@ pub enum ResourceState {
     TransferDestination,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum DescriptorType {
     CombinedImageSampler,
     UniformBuffer,
     StorageBuffer,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum BufferUsage {
     UniformBuffer,
     IndexBuffer,
