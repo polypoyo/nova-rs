@@ -49,7 +49,7 @@ impl BasicLogger {
 }
 
 impl log::Log for BasicLogger {
-    fn enabled(&self, metadata: &log::Metadata) -> bool {
+    fn enabled(&self, metadata: &log::Metadata<'_>) -> bool {
         match metadata.level() {
             log::Level::Debug => self.debug,
             log::Level::Trace => self.trace,
@@ -57,7 +57,7 @@ impl log::Log for BasicLogger {
         }
     }
 
-    fn log(&self, record: &log::Record) {
+    fn log(&self, record: &log::Record<'_>) {
         if self.enabled(record.metadata()) {
             if record.metadata().level() <= log::Level::Warn {
                 eprintln!("[{}]: {}", record.level(), record.args());
