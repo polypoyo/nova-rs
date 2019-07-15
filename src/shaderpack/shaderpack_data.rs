@@ -5,14 +5,14 @@ use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
 struct ShaderpackData {
-    pipelines: Vec<PipelineCreateInfo>,
-    passes: Vec<RenderPassCreateInfo>,
+    pipelines: Vec<PipelineCreationInfo>,
+    passes: Vec<RenderPassCreationInfo>,
     materials: Vec<MaterialData>,
-    resources: ShaderpackResourcesData,
+    resources: ShaderpackResourceData,
 }
 
 #[derive(Debug, Clone)]
-struct PipelineCreateInfo {
+struct PipelineCreationInfo {
     /// The name of this pipeline
     name: String,
     /// The pipeline that this pipeline inherits from
@@ -22,7 +22,7 @@ struct PipelineCreateInfo {
     /// All of the symbols in the shader that are defined by this state
     defines: Vec<String>,
     /// Defines the rasterizer state that's active for this pipeline
-    states: Vec<StateEnum>,
+    states: Vec<RasterizerState>,
     /// Sets up the vertex fields that Nova will bind to this pipeline
     vertex_fields: Vec<VertexFieldData>,
     /// The stencil buffer operations to perform on the front faces
@@ -42,22 +42,22 @@ struct PipelineCreateInfo {
     /// The mask to use when writing to the stencil buffer
     stencil_write_mask: u32,
     /// How to handle MSAA for this state
-    msaa_support: MSAASupportEnum,
+    msaa_support: MSAASupport,
     /// Decides how the vertices are rendered
-    primitive_mode: PrimitiveTopologyEnum,
+    primitive_mode: PrimitiveTopology,
     /// Where to get the blending factor for the soource
-    src_blend_factor: BlendFactorEnum,
+    src_blend_factor: BlendFactor,
     /// Where to get the blending factor for the destination
-    dst_blend_factor: BlendFactorEnum,
+    dst_blend_factor: BlendFactor,
     /// How to get the source alpha in a blend
-    alpha_src: BlendFactorEnum,
+    alpha_src: BlendFactor,
     /// How to get the destination alpha in a blend
-    alpha_dst: BlendFactorEnum,
+    alpha_dst: BlendFactor,
     /// The function to use for the depth test
-    depth_func: CompareOpEnum,
+    depth_func: CompareOp,
     /// The render queue that this pass belongs to
     /// This may or may not be removed depending on what is actually needed by Nova
-    render_queue: RenderQueueEnum,
+    render_queue: RenderQueue,
     /// Vertex shader to use
     vertex_shader: ShaderSource,
     /// Geometry shader to use
@@ -71,7 +71,7 @@ struct PipelineCreateInfo {
 }
 
 #[derive(Debug, Clone)]
-struct RenderPassCreateInfo {
+struct RenderPassCreationInfo {
     name: String,
     dependencies: Vec<String>,
     texture_inputs: Vec<String>,
@@ -89,7 +89,7 @@ struct MaterialData {
 }
 
 #[derive(Debug, Clone)]
-struct ShaderpackResourcesData {
+struct ShaderpackResourceData {
     textures: Vec<TextureCreateInfo>,
     samplers: Vec<SamplerCreateInfo>,
 }
@@ -153,7 +153,7 @@ struct TextureFormat {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum StateEnum {
+enum RasterizerState {
     Blending,
     InvertCulling,
     DisableCulling,
@@ -167,20 +167,20 @@ enum StateEnum {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum MSAASupportEnum {
+enum MSAASupport {
     MSAA,
     Both,
     None,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum PrimitiveTopologyEnum {
+enum PrimitiveTopology {
     Triangles,
     Lines,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum BlendFactorEnum {
+enum BlendFactor {
     One,
     Zero,
     SrcColor,
@@ -194,7 +194,7 @@ enum BlendFactorEnum {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum CompareOpEnum {
+enum CompareOp {
     Never,
     Less,
     LessEqual,
@@ -206,7 +206,7 @@ enum CompareOpEnum {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum RenderQueueEnum {
+enum RenderQueue {
     Transparent,
     Opaque,
     Cutout,
