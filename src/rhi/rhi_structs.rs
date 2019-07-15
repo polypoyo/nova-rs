@@ -1,5 +1,5 @@
-use super::rhi_enums::*;
-use crate::rhi::{DescriptorSet, Image, Resource, Sampler};
+use super::{rhi_enums::*, rhi_traits::*};
+use crate::shaderpack;
 use std::sync::Arc;
 
 /// Describes what kind of command allocator you want to create
@@ -55,7 +55,7 @@ pub struct ResourceBarrier {
 pub enum DescriptorUpdateInfo {
     Image {
         image: Arc<dyn Image>,
-        format: TextureFormat,
+        format: shaderpack::TextureFormat,
         sampler: Arc<dyn Sampler>,
     },
 }
@@ -67,3 +67,30 @@ pub struct DescriptorSetWrite {
 
     update_info: DescriptorUpdateInfo,
 }
+
+pub struct ResourceBindingDescription {
+    /// Descriptor set that his binding belongs to
+    set: u32,
+
+    /// Binding of this resource binding
+    binding: u32,
+
+    /// Number of bindings. Useful if you have an array of descriptors
+    count: u32,
+
+    /// The type of object that will be bound
+    descriptor_type: DescriptorType,
+
+    /// The shader stages that need access to this binding
+    stages: ShaderStageFlags,
+}
+
+pub struct BufferCreateInfo {
+    size: usize,
+
+    buffer_usage: BufferUsage,
+
+    allocation: DeviceMemoryAllocation,
+}
+
+pub struct DeviceMemoryAllocation;

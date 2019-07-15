@@ -130,60 +130,90 @@ pub enum ResourceState {
     TransferDestination,
 }
 
+pub enum DescriptorType {
+    CombinedImageSampler,
+    UniformBuffer,
+    StorageBuffer,
+}
+
+pub enum BufferUsage {
+    UniformBuffer,
+    IndexBuffer,
+    VertexBuffer,
+    StagingBuffer,
+}
+
 bitflags! {
     pub struct PipelineStageFlags: u32 {
-        const TopOfPipe = 0x00000001;
-        const DrawIndirect = 0x00000002;
-        const VertexInput = 0x00000004;
-        const VertexShader = 0x00000008;
-        const TessellationControlShader = 0x00000010;
-        const TessellationEvaluationShader = 0x00000020;
-        const GeometryShader = 0x00000040;
-        const FragmentShader = 0x00000080;
-        const EarlyFragmentTests = 0x00000100;
-        const LateFragmentTests = 0x00000200;
-        const ColorAttachmentOutput = 0x00000400;
-        const ComputeShader = 0x00000800;
-        const Transfer = 0x00001000;
-        const BottomOfPipe = 0x00002000;
-        const Host = 0x00004000;
-        const AllGraphics = 0x00008000;
-        const AllCommands = 0x00010000;
-        const ShadingRateImage = 0x00400000;
-        const RayTracingShader = 0x00200000;
-        const AccelerationStructureBuild = 0x02000000;
-        const TaskShader = 0x00080000;
-        const MeshShader = 0x00100000;
-        const FragmentDensityProcess = 0x00800000;
+        const TOP_OF_PIPE = 0x00000001;
+        const DRAW_INDIRECT = 0x00000002;
+        const VERTEX_INPUT = 0x00000004;
+        const VERTEX_SHADER = 0x00000008;
+        const TESSELLATION_CONTROL_SHADER = 0x00000010;
+        const TESSELLATION_EVALUATION_SHADER = 0x00000020;
+        const GEOMETRY_SHADER = 0x00000040;
+        const FRAGMENT_SHADER = 0x00000080;
+        const EARLY_FRAGMENT_TESTS = 0x00000100;
+        const LATE_FRAGMENT_TESTS = 0x00000200;
+        const COLOR_ATTACHMENT_OUTPUT = 0x00000400;
+        const COMPUTE_SHADER = 0x00000800;
+        const TRANSFER = 0x00001000;
+        const BOTTOM_OF_PIPE = 0x00002000;
+        const HOST = 0x00004000;
+        const ALL_GRAPHICS = 0x00008000;
+        const ALL_COMMANDS = 0x00010000;
+        const SHADING_RATE_IMAGE = 0x00400000;
+        const RAY_TRACING_SHADER = 0x00200000;
+        const ACCELERATION_STRUCTURE_BUILD = 0x02000000;
+        const TASK_SHADER = 0x00080000;
+        const MESH_SHADER = 0x00100000;
+        const FRAGMENT_DENSITY_PROCESS = 0x00800000;
     }
 }
 
 bitflags! {
     pub struct ResourceAccessFlags: u32 {
-        const NoFlags = 0x00000000;
-        const IndexReadBit = 0x00000002;
-        const VertexAttributeReadBit = 0x00000004;
-        const UniformReadBit = 0x00000008;
-        const InputAttachmentReadBit = 0x00000010;
-        const ShaderReadBit = 0x00000020;
-        const ShaderWriteBit = 0x00000040;
-        const ColorAttachmentReadBit = 0x00000080;
-        const ColorAttachmentWriteBit = 0x00000100;
-        const DepthStencilAttachmentReadBit = 0x00000200;
-        const DepthStencilAttachmentWriteBit = 0x00000400;
-        const TransferReadBit = 0x00000800;
-        const TransferWriteBit = 0x00001000;
-        const HostReadBit = 0x00002000;
-        const HostWriteBit = 0x00004000;
-        const MemoryReadBit = 0x00008000;
-        const MemoryWriteBit = 0x00010000;
+        const NO_FLAGS = 0x00000000;
+        const INDEX_READ_BIT = 0x00000002;
+        const VERTEX_ATTRIBUTE_READ_BIT = 0x00000004;
+        const UNIFORM_READ_BIT = 0x00000008;
+        const INPUT_ATTACHMENT_READ_BIT = 0x00000010;
+        const SHADER_READ_BIT = 0x00000020;
+        const SHADER_WRITE_BIT = 0x00000040;
+        const COLOR_ATTACHMENT_READ_BIT = 0x00000080;
+        const COLOR_ATTACHMENT_WRITE_BIT = 0x00000100;
+        const DEPTH_STENCIL_ATTACHMENT_READ_BIT = 0x00000200;
+        const DEPTH_STENCIL_ATTACHMENT_WRITE_BIT = 0x00000400;
+        const TRANSFER_READ_BIT = 0x00000800;
+        const TRANSFER_WRITE_BIT = 0x00001000;
+        const HOST_READ_BIT = 0x00002000;
+        const HOST_WRITE_BIT = 0x00004000;
+        const MEMORY_READ_BIT = 0x00008000;
+        const MEMORY_WRITE_BIT = 0x00010000;
     }
 }
 
 bitflags! {
     pub struct ImageAspectFlags: u32 {
-         const Color = 0x00000001;
-         const Depth = 0x00000002;
-         const Stencil = 0x00000004;
+        const COLOR = 0x00000001;
+        const DEPTH = 0x00000002;
+        const STENCIL = 0x00000004;
+    }
+}
+bitflags! {
+    pub struct ShaderStageFlags: u32 {
+        const VERTEX = 0x0001;
+        const TESSELLATION_CONTROL = 0x0002;
+        const TESSELLATION_EVALUATION = 0x0004;
+        const GEOMETRY = 0x0008;
+        const FRAGMENT = 0x0010;
+        const COMPUTE = 0x0020;
+        const RAYGEN = 0x0100;
+        const ANY_HIT = 0x0200;
+        const CLOSEST_HIT = 0x0400;
+        const MISS = 0x0800;
+        const INTERSECTION = 0x1000;
+        const TASK = 0x0040;
+        const MESH = 0x0080;
     }
 }

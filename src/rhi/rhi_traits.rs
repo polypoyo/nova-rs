@@ -9,8 +9,9 @@
 
 use std::collections::HashMap;
 
-use super::rhi_enums::*;
-use super::rhi_structs::*;
+use super::{rhi_enums::*, rhi_structs::*};
+use crate::shaderpack;
+use cgmath::Vector2;
 
 /// Top-level trait for functions that don't belong to any specific device object
 pub trait GraphicsApi {
@@ -109,7 +110,6 @@ pub trait Device {
     ///
     /// * `data` - The shaderpack data to create the renderpass from
     fn create_renderpass(&self, data: shaderpack::RenderPassCreationInfo) -> Result<Self::Renderpass, MemoryError>;
-    fn create_renderpass(&self, data: RenderpassData) -> Result<Self::Renderpass, MemoryError>;
 
     /// Creates a new Framebuffer
     ///
@@ -126,7 +126,7 @@ pub trait Device {
         &self,
         renderpass: Self::Renderpass,
         attachments: Vec<Self::Image>,
-        framebuffer_size: Vec2,
+        framebuffer_size: Vector2<f32>,
     ) -> Result<Self::Framebuffer, MemoryError>;
 
     /// Creates a PipelineInterface from the provided information
@@ -139,8 +139,8 @@ pub trait Device {
     fn create_pipeline_interface(
         &self,
         bindings: &HashMap<String, ResourceBindingDescription>,
-        color_attachments: &Vec<TextureAttachmentData>,
-        depth_texture: &Option<TextureAttachmentData>,
+        color_attachments: &Vec<shaderpack::TextureAttachmentInfo>,
+        depth_texture: &Option<shaderpack::TextureAttachmentInfo>,
     ) -> Result<Self::PipelineInterface, MemoryError>;
 
     /// Creates a DescriptorPool with the desired descriptors
@@ -166,7 +166,7 @@ pub trait Device {
     fn create_pipeline(
         &self,
         pipeline_interface: Self::PipelineInterface,
-        data: PipelineData,
+        data: shaderpack::PipelineCreationInfo,
     ) -> Result<Self::Pipeline, PipelineCreationError>;
 
     /// Creates an Image from the specified ImageCreateInto
@@ -177,7 +177,6 @@ pub trait Device {
     ///
     /// * `data` - The ImageData to create the image from
     fn create_image(&self, data: shaderpack::TextureCreateInfo) -> Result<Self::Image, MemoryError>;
-    fn create_image(&self, data: ImageData) -> Result<Self::Image, MemoryError>;
 
     /// Creates a new Semaphore
     fn create_semaphore(&self) -> Result<Self::Semaphore, MemoryError>;
@@ -254,7 +253,6 @@ pub trait Memory {
     ///
     /// * `data` - The BufferData to create the new buffer from
     fn create_buffer(&self, data: BufferCreateInfo) -> Result<Self::Buffer, MemoryError>;
-    fn create_buffer(&self, data: BufferData) -> Result<Self::Buffer, MemoryError>;
 }
 
 pub trait Resource {}
@@ -270,7 +268,7 @@ pub trait Buffer {
     /// * `data` - The data to write to the buffer
     /// * `num_bytes` - The number of bytes of the data to write
     /// * `offset` - The offset in the buffer to where you want the data to be
-    fn write_data(&self, data: BufferData, num_bytes: u64, offset: u64);
+    fn write_data(&self, data: BufferCreateInfo, num_bytes: u64, offset: u64);
 }
 
 pub trait Image {}
@@ -324,7 +322,7 @@ pub trait CommandList {
     /// Records resource barriers which happen after all the stages in the `stages_before_barrier`
     /// bitmask, and before all the stages in the `stages_after_barrier` bitmask
     ///
-    ///# Parameters
+    /// # Parameters
     ///
     /// * `stages_before_barrier` - The pipeline barrier will take place after all the stages in this bitmask
     /// * `stages_after_barrier` - The pipeline barrier will take place before all the stages in this bitmask
