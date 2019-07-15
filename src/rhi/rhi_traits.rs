@@ -330,7 +330,7 @@ pub trait CommandList {
     fn resource_barriers(
         stages_before_barrier: PipelineStageFlags,
         stages_after_barrier: PipelineStageFlags,
-        barriers: Vec<ResourceBarrier<Self::Resource>>,
+        barriers: Vec<ResourceBarrier>,
     );
 
     /// Records a command to copy data from one buffer to another
