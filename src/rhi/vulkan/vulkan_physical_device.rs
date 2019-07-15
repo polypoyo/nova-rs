@@ -1,24 +1,34 @@
 use super::super::{DeviceCreationError, PhysicalDevice, PhysicalDeviceProperties};
 
-use ash::{extensions::khr::Swapchain, vk};
+use ash::{
+    extensions::{
+        ext::DebugReport,
+        khr::{Swapchain, Win32Surface, XlibSurface},
+    },
+    vk,
+};
 
 pub struct VulkanPhysicalDevice {
     instance: vk::Instance,
 
     phys_device: vk::PhysicalDevice,
+
+    graphics_queue_family_index: u32,
+    compute_queue_family_index: u32,
+    copy_queue_family_index: u32,
 }
 
 impl VulkanPhysicalDevice {
-    fn supports_needed_extensions() -> bool {
-        let available_extensions = match instance.enumerate_device_extension_properties(phys_device) {
+    fn supports_needed_extensions(&self) -> bool {
+        let available_extensions = match self.instance.enumerate_device_extension_properties(self.phys_device) {
             Ok(extensions) => extensions,
             Err(_) => Vec::new(),
         };
 
-        let mut needed_extensions = get_needed_extensions()
+        let mut needed_extensions = get_needed_extensions();
 
         for ext in available_extensions {
-            needed_extensions.remove(etx);
+            needed_extensions.remove(ext.extension_name);
         }
 
         needed_extensions.is_empty()
@@ -33,10 +43,18 @@ impl PhysicalDevice for VulkanPhysicalDevice {
     }
 
     fn can_be_used_by_nova(&self) -> bool {
-        let props = instance.get_physical_device_properties(phys_device);
+        if !self.supports_needed_extensions() {
+            false
+        }
 
-        if !supports_needed_extensions() {
-            return false;
+        let queue_family_props: Vec<vk::QueueFamilyProperties> = self
+            .instance
+            .get_physical_device_queue_family_properties(self.phys_device);
+
+        for props in queue_family_props {
+            let supports_present = self.phys_device.get_physical_device_surface_support_khr()
+            let supports_graphics = props.queue_flags | vk::QueueFlags::GRAPHICS;
+
         }
 
         true
@@ -48,19 +66,19 @@ impl PhysicalDevice for VulkanPhysicalDevice {
 }
 
 #[cfg(all(unix, not(target_os = "android")))]
-fn get_needed_extensions() -> Vec<*const i8> {
+fn get_needed_extensions() -> Vec<*const u8> {
     vec![
-        vk::Surface::name().as_ptr(),
-        vk::XlibSurface::name().as_ptr(),
-        vk::DebugReport::name().as_ptr()
+        Swapchain::name().as_ptr(),
+        XlibSurface::name().as_ptr(),
+        DebugReport::name().as_ptr(),
     ]
 }
 
 #[cfg(windows)]
-fn get_needed_extensions() -> Vec<*const i8> {
+fn get_needed_extensions() -> Vec<*const u8> {
     vec![
-        vk::Surface::name().as_ptr(),
-        vk::Win32Surface::name().as_ptr(),
-        vk::DebugReport::name().as_ptr()
+        Swapchain::name().as_ptr(),
+        Win32Surface::name().as_ptr(),
+        DebugReport::name().as_ptr(),
     ]
 }
