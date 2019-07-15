@@ -317,7 +317,6 @@ pub trait CommandList {
     type Pipeline: Pipeline;
     type DescriptorSet: DescriptorSet;
     type PipelineInterface: PipelineInterface;
-    type Resource: Resource;
 
     /// Records resource barriers which happen after all the stages in the `stages_before_barrier`
     /// bitmask, and before all the stages in the `stages_after_barrier` bitmask

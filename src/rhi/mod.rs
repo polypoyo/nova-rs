@@ -5,6 +5,8 @@
 //! management. The RHI will be implemented by at least Vulkan and Direct3D 12. I'd like to eventually also support
 //! Metal, but there's a lot to do before then
 
+use super::shaderpack;
+
 mod rhi_enums;
 mod rhi_structs;
 mod rhi_traits;
@@ -19,10 +21,32 @@ mod vulkan {
     mod vulkan_physical_device;
 }
 
+mod dx12 {
+    pub mod dx12_graphics_api;
+
+    mod dx12_buffer;
+    mod dx12_command_allocator;
+    mod dx12_command_list;
+    mod dx12_descriptor_pool;
+    mod dx12_descriptor_set;
+    mod dx12_device;
+    mod dx12_fence;
+    mod dx12_framebuffer;
+    mod dx12_image;
+    mod dx12_memory;
+    mod dx12_physical_device;
+    mod dx12_pipeline;
+    mod dx12_pipeline_interface;
+    mod dx12_queue;
+    mod dx12_renderpass;
+    mod dx12_semaphore;
+}
+
 // Re-exports
 pub use rhi_enums::*;
 pub use rhi_structs::*;
 pub use rhi_traits::*;
 
 // Re-export entry points each supported API
+pub use dx12::dx12_graphics_api::Dx12GraphicsApi;
 pub use vulkan::vulkan_graphics_api::VulkanGraphicsApi;
