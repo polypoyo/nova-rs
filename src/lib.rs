@@ -15,8 +15,6 @@ pub mod shaderpack;
 
 extern crate bitflags;
 
-extern crate bitflags;
-
 #[cfg(test)]
 mod tests {
     #[test]
