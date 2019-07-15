@@ -3,6 +3,7 @@ pub mod loading;
 pub mod logging;
 // pub mod rhi;
 pub mod settings;
+pub mod shaderpack;
 
 #[cfg(test)]
 mod tests {
