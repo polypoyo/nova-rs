@@ -1,3 +1,11 @@
+#![feature(async_await)]
+#![feature(async_closure)]
+#![feature(test)]
+#![deny(nonstandard_style)]
+#![deny(future_incompatible)]
+#![deny(rust_2018_idioms)]
+#![warn(unused)]
+
 pub mod debugging;
 pub mod loading;
 pub mod logging;
