@@ -1,10 +1,9 @@
 //! Structs that represent shaderpack data
 
-use std::collections::HashMap;
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 
 #[derive(Debug, Clone)]
-struct ShaderpackData {
+pub struct ShaderpackData {
     pipelines: Vec<PipelineCreationInfo>,
     passes: Vec<RenderPassCreationInfo>,
     materials: Vec<MaterialData>,
@@ -12,7 +11,7 @@ struct ShaderpackData {
 }
 
 #[derive(Debug, Clone)]
-struct PipelineCreationInfo {
+pub struct PipelineCreationInfo {
     /// The name of this pipeline
     name: String,
     /// The pipeline that this pipeline inherits from
@@ -71,7 +70,7 @@ struct PipelineCreationInfo {
 }
 
 #[derive(Debug, Clone)]
-struct RenderPassCreationInfo {
+pub struct RenderPassCreationInfo {
     name: String,
     dependencies: Vec<String>,
     texture_inputs: Vec<String>,
@@ -82,26 +81,26 @@ struct RenderPassCreationInfo {
 }
 
 #[derive(Debug, Clone)]
-struct MaterialData {
+pub struct MaterialData {
     name: String,
     passes: Vec<MaterialPass>,
     geometry_filter: String,
 }
 
 #[derive(Debug, Clone)]
-struct ShaderpackResourceData {
+pub struct ShaderpackResourceData {
     textures: Vec<TextureCreateInfo>,
     samplers: Vec<SamplerCreateInfo>,
 }
 
 #[derive(Debug, Clone)]
-struct VertexFieldData {
+pub struct VertexFieldData {
     semantic_name: String,
     field: VertexField,
 }
 
 #[derive(Debug, Clone)]
-struct StencilOpState {
+pub struct StencilOpState {
     fail_op: StencilOp,
     pass_op: StencilOp,
     depth_fail_op: StencilOp,
@@ -111,20 +110,20 @@ struct StencilOpState {
 }
 
 #[derive(Debug, Clone)]
-struct ShaderSource {
+pub struct ShaderSource {
     filename: PathBuf,
     source: Vec<u32>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-struct TextureAttachmentInfo {
+pub struct TextureAttachmentInfo {
     name: String,
     pixel_format: PixelFormat,
     clear: bool,
 }
 
 #[derive(Debug, Clone)]
-struct MaterialPass {
+pub struct MaterialPass {
     name: String,
     material_name: String,
     pipeline: String,
@@ -132,20 +131,20 @@ struct MaterialPass {
 }
 
 #[derive(Debug, Clone)]
-struct TextureCreateInfo {
+pub struct TextureCreateInfo {
     name: String,
     format: TextureFormat,
 }
 
 #[derive(Debug, Clone)]
-struct SamplerCreateInfo {
+pub struct SamplerCreateInfo {
     name: String,
     filter: TextureFilter,
     wrap_mode: WrapMode,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-struct TextureFormat {
+pub struct TextureFormat {
     pixel_format: PixelFormat,
     dimension_type: TextureDimensionType,
     width: f32,
@@ -153,7 +152,7 @@ struct TextureFormat {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum RasterizerState {
+pub enum RasterizerState {
     Blending,
     InvertCulling,
     DisableCulling,
@@ -167,20 +166,20 @@ enum RasterizerState {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum MSAASupport {
+pub enum MSAASupport {
     MSAA,
     Both,
     None,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum PrimitiveTopology {
+pub enum PrimitiveTopology {
     Triangles,
     Lines,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum BlendFactor {
+pub enum BlendFactor {
     One,
     Zero,
     SrcColor,
@@ -194,7 +193,7 @@ enum BlendFactor {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum CompareOp {
+pub enum CompareOp {
     Never,
     Less,
     LessEqual,
@@ -206,14 +205,14 @@ enum CompareOp {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum RenderQueue {
+pub enum RenderQueue {
     Transparent,
     Opaque,
     Cutout,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum VertexField {
+pub enum VertexField {
     Position,
     Color,
     UV0,
@@ -226,7 +225,7 @@ enum VertexField {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum StencilOp {
+pub enum StencilOp {
     Keep,
     Zero,
     Replace,
@@ -238,7 +237,7 @@ enum StencilOp {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum PixelFormat {
+pub enum PixelFormat {
     RGBA8,
     RGBA16F,
     RGBA32F,
@@ -247,20 +246,20 @@ enum PixelFormat {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum TextureFilter {
+pub enum TextureFilter {
     TexelAA,
     Bilinear,
     Point,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum WrapMode {
+pub enum WrapMode {
     Repeat,
     Clamp,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-enum TextureDimensionType {
+pub enum TextureDimensionType {
     ScreenRelative,
     Absolute,
 }
