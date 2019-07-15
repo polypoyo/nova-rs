@@ -17,11 +17,7 @@ pub trait GraphicsApi {
     type PhysicalDevice: PhysicalDevice;
 
     /// Gets a list of all available graphics adapters
-<<<<<<< HEAD
     fn get_adapters() -> Vec<Self::PhysicalDevice>;
-=======
-    fn get_adapters() -> Vec<*PhysicalDevice>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 }
 
 /// An implementation of the rendering API. This will probably be a GPU card, but a software
@@ -49,11 +45,7 @@ pub trait PhysicalDevice {
     /// Nova has very specific requirements for a logical device, and how you express those
     /// requirements varies significantly by API. Thus, this method doesn't take a create info
     /// struct of any sort
-<<<<<<< HEAD
     fn create_logical_device(&self) -> Result<Self::Device, DeviceCreationError>;
-=======
-    fn create_logical_device(&self) -> Result<*Device, DeviceCreationError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 }
 
 /// The logical device that we're rendering with
@@ -82,11 +74,7 @@ pub trait Device {
     ///
     /// * `queue_family_index` - The queue family index to get a queue from
     /// * `queue_index` - The index of the queue to get from the selected queue family
-<<<<<<< HEAD
     fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<Self::Queue, QueueGettingError>;
-=======
-    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<*Queue, QueueGettingError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Allocates memory from the graphics API
     ///
@@ -103,11 +91,7 @@ pub trait Device {
         size: u64,
         memory_usage: MemoryUsage,
         allowed_objects: ObjectType,
-<<<<<<< HEAD
     ) -> Result<Self::Memory, AllocationError>;
-=======
-    ) -> Result<*Memory<T>, AllocationError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates a new CommandAllocator
     ///
@@ -117,22 +101,15 @@ pub trait Device {
     fn create_command_allocator(
         &self,
         create_info: CommandAllocatorCreateInfo,
-<<<<<<< HEAD
     ) -> Result<Self::CommandAllocator, MemoryError>;
-=======
-    ) -> Result<*CommandAllocator, MemoryError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates a new renderpass from the provided shaderpack data
     ///
     /// # Parameters
     ///
     /// * `data` - The shaderpack data to create the renderpass from
-<<<<<<< HEAD
+    fn create_renderpass(&self, data: shaderpack::RenderPassCreationInfo) -> Result<Self::Renderpass, MemoryError>;
     fn create_renderpass(&self, data: RenderpassData) -> Result<Self::Renderpass, MemoryError>;
-=======
-    fn create_renderpass(&self, data: RenderpassData) -> Result<*RenderPass, MemoryError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates a new Framebuffer
     ///
@@ -147,17 +124,10 @@ pub trait Device {
     /// * `framebuffer_size` - The size of the framebuffer, in pixels
     fn create_framebuffer(
         &self,
-<<<<<<< HEAD
         renderpass: Self::Renderpass,
         attachments: Vec<Self::Image>,
         framebuffer_size: Vec2,
     ) -> Result<Self::Framebuffer, MemoryError>;
-=======
-        renderpass: *RenderPass,
-        attachments: Vec<*Image>,
-        framebuffer_size: Vec2,
-    ) -> Result<*Framebuffer, MemoryError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates a PipelineInterface from the provided information
     ///
@@ -171,11 +141,7 @@ pub trait Device {
         bindings: &HashMap<String, ResourceBindingDescription>,
         color_attachments: &Vec<TextureAttachmentData>,
         depth_texture: &Option<TextureAttachmentData>,
-<<<<<<< HEAD
     ) -> Result<Self::PipelineInterface, MemoryError>;
-=======
-    ) -> Result<*PipelineInterface, MemoryError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates a DescriptorPool with the desired descriptors
     ///
@@ -189,11 +155,7 @@ pub trait Device {
         num_sampled_images: u32,
         num_samplers: u32,
         num_uniform_buffers: u32,
-<<<<<<< HEAD
     ) -> Result<Vec<Self::DescriptorPool>, DescriptorPoolCreationError>;
-=======
-    ) -> Result<Vec<*DescriptorPool>, DescriptorPoolCreationError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates a Pipeline with the provided PipelineInterface and the given PipelineCreateInfo
     ///
@@ -203,15 +165,9 @@ pub trait Device {
     /// * `data` - The data to create a pipeline from
     fn create_pipeline(
         &self,
-<<<<<<< HEAD
         pipeline_interface: Self::PipelineInterface,
         data: PipelineData,
     ) -> Result<Self::Pipeline, PipelineCreationError>;
-=======
-        pipeline_interface: *PipelineInterface,
-        data: PipelineData,
-    ) -> Result<*Pipeline, PipelineCreationError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates an Image from the specified ImageCreateInto
     ///
@@ -220,67 +176,42 @@ pub trait Device {
     /// # Parameters
     ///
     /// * `data` - The ImageData to create the image from
-<<<<<<< HEAD
+    fn create_image(&self, data: shaderpack::TextureCreateInfo) -> Result<Self::Image, MemoryError>;
     fn create_image(&self, data: ImageData) -> Result<Self::Image, MemoryError>;
 
     /// Creates a new Semaphore
     fn create_semaphore(&self) -> Result<Self::Semaphore, MemoryError>;
-=======
-    fn create_image(&self, data: ImageData) -> Result<*Image, MemoryError>;
-
-    /// Creates a new Semaphore
-    fn create_semaphore(&self) -> Result<*Semaphore, MemoryError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates the specified number of Semaphores
     ///
     /// # Parameters
     ///
     /// * `count` - The number of semaphores to create
-<<<<<<< HEAD
     fn create_semaphores(&self, count: u32) -> Result<Vec<Self::Semaphore>, MemoryError>;
 
     /// Creates a new Fence
     fn create_fence(&self) -> Result<Self::Fence, MemoryError>;
-=======
-    fn create_semaphores(&self, count: u32) -> Result<Vec<*Semaphore>, MemoryError>;
-
-    /// Creates a new Fence
-    fn create_fence(&self) -> Result<*Fence, MemoryError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Creates the specified number of Fences
     ///
     /// # Parameters
     ///
     /// * `count` - The number of fences to create
-<<<<<<< HEAD
     fn create_fences(&self, count: u32) -> Result<Vec<Self::Fence>, MemoryError>;
-=======
-    fn create_fences(&self, count: u32) -> Result<Vec<*Fence>, MemoryError>;
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Waits for all the provided fences to be signalled
     ///
     /// # Parameters
     ///
     /// * `fences` - All the fences to wait for
-<<<<<<< HEAD
     fn wait_for_fences(&self, fences: Vec<Self::Fence>);
-=======
-    fn wait_for_fences(&self, fences: Vec<*Fence>);
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Resets all the provided fences to an unsignalled state
     ///
     /// # Parameters
     ///
     /// * `fences` - The fences to reset
-<<<<<<< HEAD
     fn reset_fences(&self, fences: Vec<Self::Fence>);
-=======
-    fn reset_fences(&self, fences: Vec<*Fence>);
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
     /// Executes the provided DescriptorSetWrites on this device
     ///
@@ -290,7 +221,6 @@ pub trait Device {
     fn update_descriptor_sets(&self, updates: Vec<DescriptorSetWrite>);
 }
 
-<<<<<<< HEAD
 pub trait Queue {
     type CommandList: CommandList;
     type Fence: Fence;
@@ -310,14 +240,6 @@ pub trait Queue {
         wait_semaphores: Vec<Self::Semaphore>,
         signal_semaphores: Vec<Self::Semaphore>,
     );
-=======
-pub trait AllocationInfo {}
-
-pub trait AllocationStrategy {
-    fn allocate(&self, size: u64) -> *AllocationInfo;
-
-    fn free(&self, alloc: *AllocationInfo);
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 }
 
 /// A block of memory and an allocation strategy
@@ -331,32 +253,9 @@ pub trait Memory {
     /// # Parameters
     ///
     /// * `data` - The BufferData to create the new buffer from
-<<<<<<< HEAD
+    fn create_buffer(&self, data: BufferCreateInfo) -> Result<Self::Buffer, MemoryError>;
     fn create_buffer(&self, data: BufferData) -> Result<Self::Buffer, MemoryError>;
 }
-
-pub trait Resource {}
-=======
-    fn create_buffer(&self, data: BufferData, allocation: *AllocationInfo) -> Result<*Buffer, MemoryError>;
-
-    /// Determines the actual allocation for an object of a given size
-    fn calculate_allocation(size: u64) -> *AllocationInfo;
-}
-
-pub trait CommandAllocator {
-    fn create_command_list() -> Result<*CommandList, CommandListCreationError>;
-}
-
-/// A pool of descriptors
-pub trait DescriptorPool {
-    /// Creates DescriptorSets from the provided PipelineInterface
-    ///
-    /// # Parameters
-    ///
-    /// * `pipeline_interface` - The PipelineInterface to create the descriptors from
-    fn create_descriptor_sets(&self, pipeline_interface: *PipelineInterface) -> Vec<*DescriptorSet>;
-}
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
 
 pub trait Resource {}
 
@@ -387,7 +286,6 @@ pub trait DescriptorPool {
     ///
     /// # Parameters
     ///
-<<<<<<< HEAD
     /// * `pipeline_interface` - The PipelineInterface to create the descriptors from
     fn create_descriptor_sets(&self, pipeline_interface: Self::PipelineInterface) -> Vec<Self::DescriptorSet>;
 }
@@ -452,17 +350,6 @@ pub trait CommandList {
         source_buffer: Self::Buffer,
         source_offset: u64,
         num_bytes: u64,
-=======
-    /// * `commands` - The CommandList to submit to this queue
-    /// * `fence_to_signal` - The Fence to signal after the CommandList has finished executing
-    /// * `wait_semaphores` The semaphores to wait for before executing the CommandList
-    /// * `signal_semaphores` - The semaphores to signal when the CommandList has finished executing
-    fn submit_commands(
-        commands: *CommandList,
-        fence_to_signal: *Fence,
-        wait_semaphores: Vec<*Semaphore>,
-        signal_semaphores: Vec<*Semaphore>,
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
     );
 
     /// Records a command to execute the provided command lists
@@ -513,92 +400,6 @@ pub trait CommandList {
     ///
     /// * `buffer` - The buffer to bind as an index buffer
     fn bind_index_buffer(buffer: Self::Buffer);
-
-    /// Records a drawcall to grab `num_indices` indices from the currently bound index buffer and
-    /// draw them `num_instances` times
-    ///
-    /// # Parameters
-    ///
-    /// * `num_indices` - The number of indices to draw from the currently bound index buffer
-    /// * `num_instances` - How many times to draw the mesh
-    fn draw_indexed_mesh(num_indices: u32, num_instances: u32);
-}
-
-/// A CommandList is a sequence of commands which can be submitted to the GPU
-pub trait CommandList {
-    /// Records resource barriers which happen after all the stages in the `stages_before_barrier`
-    /// bitmask, and before all the stages in the `stages_after_barrier` bitmask
-    ///
-    ///# Parameters
-    ///
-    /// * `stages_before_barrier` - The pipeline barrier will take place after all the stages in this bitmask
-    /// * `stages_after_barrier` - The pipeline barrier will take place before all the stages in this bitmask
-    /// * `barriers` - The resource barriers to record
-    fn resource_barriers(
-        stages_before_barrier: PipelineStageFlags,
-        stages_after_barrier: PipelineStageFlags,
-        barriers: Vec<ResourceBarrier>,
-    );
-
-    /// Records a command to copy data from one buffer to another
-    ///
-    /// # Parameters
-    ///
-    /// * `destination_buffer` - The buffer to write data to
-    /// * `destination_offset` - The number of bytes from the start of `destination_buffer` to write to
-    /// * `source_buffer` - The buffer to read data from
-    /// * `source_offset` - The number of bytes from the start of `source_buffer` to read data from
-    /// * `num_bytes` - The number of bytes to copy
-    fn copy_buffer(destination_buffer: *Buffer, destination_offset: u64, source_buffer: *Buffer, source_offset: u64, num_bytes: u64);
-
-    /// Records a command to execute the provided command lists
-    ///
-    /// # Parameters
-    ///
-    /// * `lists` - The command lists to execute
-    fn execute_command_lists(lists: Vec<*CommandList>);
-
-    /// Records a command to begin a renderpass with a framebuffer
-    ///
-    /// # Parameters
-    ///
-    /// * `renderpass` - The renderpass to begin
-    /// * `framebuffer` - The framebuffer to begin the renderpass with
-    fn begin_renderpass(renderpass: *Renderpass, framebuffer: *Framebuffer);
-
-    /// Records a command to end the current renderpass
-    fn end_renderpass();
-
-    /// Binds a pipeline to the command list
-    ///
-    /// # Parameters
-    ///
-    /// * `pipeline` - The pipeline to bind
-    fn bind_pipeline(pipeline: *Pipeline);
-
-    /// Records a command to bind DescriptorSet to a PipelineInterface
-    ///
-    /// # Parameters
-    ///
-    /// * `descriptor_sets` - The DescriptorSets to bind
-    /// * `pipeline_interface` - The PipelineInterface to bind the descriptor sets to
-    fn bind_descriptor_sets(descriptor_sets: Vec<*DescriptorSet>, pipeline_interface: *PipelineInterface);
-
-    /// Records a command to bind vertex buffers
-    ///
-    /// Vertex buffers are always bound sequentially starting at binding 0
-    ///
-    /// # Parameters
-    ///
-    /// * `buffers` - The buffers to bind
-    fn bind_vertex_buffers(buffers: Vec<*Buffer>);
-
-    /// Binds an index buffer
-    ///
-    /// # Parameters
-    ///
-    /// * `buffer` - The buffer to bind as an index buffer
-    fn bind_index_buffer(buffer: *Buffer);
 
     /// Records a drawcall to grab `num_indices` indices from the currently bound index buffer and
     /// draw them `num_instances` times

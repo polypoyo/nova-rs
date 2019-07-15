@@ -41,13 +41,7 @@ pub enum ObjectType {
     Any,
 }
 
-<<<<<<< HEAD
 pub enum QueueType {
-=======
-/// The type of command list
-pub enum CommandListType {
-    /// Graphics command lists can
->>>>>>> [rhi] Use pointers instead of dyn, and some more trait work
     Graphics,
     Compute,
     Copy,
