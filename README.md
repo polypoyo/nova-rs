@@ -1,5 +1,5 @@
 <h1 align="center">
-	<img width=64px src="https://raw.githubusercontent.com/NovaMods/nova-rs/dc28cda0d5b534e89632602bac1bcddbda0a3c57/docs/images/nova-logo-128px-noborder.png">ova Renderer
+  <img width=64px src="https://raw.githubusercontent.com/NovaMods/nova-rs/dc28cda0d5b534e89632602bac1bcddbda0a3c57/docs/images/nova-logo-128px-noborder.png">ova Renderer
 </h1>
 
 <p align="center">
@@ -19,14 +19,23 @@
 ## Purpose
 
 We set out to make a completely new renderer for minecraft aimed at giving the best tools to shaderpack developers
-to run their shaderpack as fast as is possible. This is a rewrite of the old Nova Renderer project from C++ to Rust.
+to run their shaderpack as fast as is possible. This is a rewrite of the old [Nova Renderer](https://github.com/NovaMods/nova-renderer) project from C++ to Rust.
 
-[Why Rust?](docs/rust_faq.md)
+### QuikFAQ
+
+- Nova is a replacement for Minecraft's renderer build for shaderpack support and more shaderpack features. It is not:
+  - Something to make Minecraft run faster
+  - For older computers
+  - A rewrite of the tick system
+  - A rewrite of the audio system
+  - Anything to do with the MC server
+- [Why Rust?](docs/rust_faq.md)
 
 ## Development Status
 
 Nova Renderer is a passion project by the developers and as such does not have any set deadlines or release dates.
-We are still in early development of the rust rewrite and things may change at any moment.
+We are still in early development of the rust rewrite and things may change at any moment. That all being said, it
+is till in active development.
 
 ## Developer Setup
 
@@ -35,6 +44,8 @@ rustfmt installed for that toolchain so the automatically installed pre-commit h
 
 Please read the following to help get a feel for the project:
 
-- [The Project Charter](docs/project_charter.md)
-- [Git Rules](docs/git.md)
+- [The Project Charter](docs/project_charter.md).
+- [Git Rules](docs/git.md). **These must be followed for your PR to be accepted.**
 - [Async Await Primer](docs/async_await.md). This project uses Rust's async/await feature throughout.
+
+Please contact us on discord if you want to help! We're very friendly :smile:
