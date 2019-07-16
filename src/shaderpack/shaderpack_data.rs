@@ -72,7 +72,7 @@ pub struct PipelineCreationInfo {
 
 impl PipelineCreationInfo {
     pub fn merge_with_parent(&self, other: &PipelineCreationInfo) -> Self {
-        unimplimented!()
+        unimplemented!()
     }
 }
 
