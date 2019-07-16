@@ -39,6 +39,8 @@ is till in active development.
 
 ## Developer Setup
 
+[Contributing](docs/contributing.md).
+
 You must have a rust 3.28+ nightly toolchain setup. If you want to develop for nova renderer you must also have
 rustfmt installed for that toolchain so the automatically installed pre-commit hook works.
 
