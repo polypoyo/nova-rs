@@ -1,7 +1,7 @@
 //! Set up build logic and repository tools
 
 use std::{
-    fs::{copy, read_dir, remove_file, write},
+    fs::{copy, read_dir, remove_file},
     path::Path,
     process::Command,
 };

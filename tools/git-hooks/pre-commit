@@ -11,3 +11,5 @@ if [[ -n "${hooks_diff}" ]] || [[ "${installed_revision}" != "${source_revision}
     touch .git/hooks/.dirty
     cp tools/git-hooks/* .git/hooks
 fi
+
+cargo fmt
