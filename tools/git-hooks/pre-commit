@@ -12,4 +12,4 @@ if [[ -n "${hooks_diff}" ]] || [[ "${installed_revision}" != "${source_revision}
     cp tools/git-hooks/* .git/hooks
 fi
 
-cargo fmt -- --check
+cargo fmt
