@@ -23,7 +23,7 @@ to run their shaderpack as fast as is possible. This is a rewrite of the old [No
 
 ### QuikFAQ
 
-- Nova is a replacement for Minecraft's renderer build for shaderpack support and more shaderpack features. It is not:
+- Nova is a replacement for Minecraft's renderer built for shaderpack support and more shaderpack features. It is not:
   - Something to make Minecraft run faster
   - For older computers
   - A rewrite of the tick system
