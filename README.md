@@ -35,7 +35,7 @@ to run their shaderpack as fast as is possible. This is a rewrite of the old [No
 
 Nova Renderer is a passion project by the developers and as such does not have any set deadlines or release dates.
 We are still in early development of the rust rewrite and things may change at any moment. That all being said, it
-is till in active development.
+is still in active development.
 
 ## Developer Setup
 
