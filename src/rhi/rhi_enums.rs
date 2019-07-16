@@ -1,4 +1,5 @@
 use bitflags::bitflags;
+use failure::Fail;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum PhysicalDeviceManufacturer {
@@ -58,65 +59,68 @@ pub enum CommandListLevel {
     Secondary,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Fail, Debug, Clone, Eq, PartialEq)]
 pub enum DeviceCreationError {
+    #[fail(display = "Failed to create device.")]
     Failed,
 }
 
 /// A memory-related error
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Fail, Debug, Clone, Eq, PartialEq)]
 pub enum MemoryError {
-    /// There's not enough host memory to create the requested object
+    #[fail(display = "There's not enough host memory to create the requested object.")]
     OutOfHostMemory,
 
-    /// There's not enough device memory to create the requested object
+    #[fail(display = "There's not enough device memory to create the requested object.")]
     OutOfDeviceMemory,
 }
 
 /// Errors tha can happen when you try to get a queue from a device
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Fail, Debug, Clone, Eq, PartialEq)]
 pub enum QueueGettingError {
-    /// The device does not have enough memory to get you the queue you want
+    #[fail(display = "The device does not have enough memory to get you the queue you want.")]
     OutOfMemory,
 }
 
 /// All the errors you might get when allocating memory
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Fail, Debug, Clone, Eq, PartialEq)]
 pub enum AllocationError {
-    /// There's not enough host memory to make the requested allocation
+    #[fail(display = "There's not enough host memory to make the requested allocation")]
     OutOfHostMemory,
 
-    /// There's not enough device memory to make the requested allocation
+    #[fail(display = "There's not enough device memory to make the requested allocation.")]
     OutOfDeviceMemory,
 
-    /// You've made too many memory allocations already
+    #[fail(display = "You've made too many memory allocations already.")]
     TooManyObjects,
 
+    #[fail(display = "Handle Invalid")]
     InvalidExternalHandle,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Fail, Debug, Clone, Eq, PartialEq)]
 pub enum DescriptorPoolCreationError {
-    /// There's not enough host memory to create the descriptor pool
+    #[fail(display = "There's not enough host memory to create the descriptor pool.")]
     OutOfHostMemory,
 
-    /// There's not enough device memory to create the descriptor pool
+    #[fail(display = "There's not enough device memory to create the descriptor pool.")]
     OutOfDeviceMemory,
 
-    /// Memory is too fragmented to create the descriptor pool
+    #[fail(display = "Memory is too fragmented to create the descriptor pool.")]
     Fragmentation,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Fail, Debug, Clone, Eq, PartialEq)]
 pub enum PipelineCreationError {
-    /// There's not enough host memory to create the pipeline
+    #[fail(display = "There's not enough host memory to create the pipeline.")]
     OutOfHostMemory,
 
-    /// There's not enough device memory to create the pipeline
+    #[fail(display = "There's not enough device memory to create the pipeline.")]
     OutOfDeviceMemory,
 
-    /// One or more shaders failed to compile or link. If debug reports are enabled, details are
-    /// reported through a debug report
+    #[fail(
+        display = "One or more shaders failed to compile or link. If debug reports are enabled, details are reported through a debug report."
+    )]
     InvalidShader,
 }
 
