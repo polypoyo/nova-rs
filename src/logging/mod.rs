@@ -34,7 +34,7 @@ pub struct BasicLogger {
     debug: bool,
 
     /// If trace level logs are enabled
-    trace: bool
+    trace: bool,
 }
 
 /// Implementation of the `BasicLogger` logging to the standard output streams
@@ -44,7 +44,7 @@ impl BasicLogger {
     /// Here the debug and trace levels can be enabled, all other levels are always enabled
     /// with the `BasicLogger`
     pub fn new(debug: bool, trace: bool) -> BasicLogger {
-        BasicLogger{debug, trace}
+        BasicLogger { debug, trace }
     }
 }
 
@@ -53,7 +53,7 @@ impl log::Log for BasicLogger {
         match metadata.level() {
             log::Level::Debug => self.debug,
             log::Level::Trace => self.trace,
-            _ => true
+            _ => true,
         }
     }
 
