@@ -3,7 +3,6 @@
 use std::{
     fs::{copy, read_dir, remove_file},
     path::Path,
-    process::Command,
 };
 
 fn main() {
