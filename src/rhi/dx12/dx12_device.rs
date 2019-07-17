@@ -54,7 +54,7 @@ impl Device for Dx12PhysicalDevice {
         renderpass: Dx12Renderpass,
         attachments: Vec<Dx12Image>,
         framebuffer_size: _,
-    ) -> Result<Dx12Fdramebuffer, MemoryError> {
+    ) -> Result<Dx12Framebuffer, MemoryError> {
         unimplemented!()
     }
 

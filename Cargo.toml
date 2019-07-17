@@ -10,6 +10,7 @@ build = "build.rs"
 [dependencies]
 bitflags = "1.1.0"
 cgmath = { version = "0.17.0", features = ["swizzle"] }
+dxgi-sys = "0.2.0"
 d3d12-sys = "0.2.0"
 failure = "0.1.5"
 futures-preview = { version = "=0.3.0-alpha.17", features = ["async-await", "nightly"] }

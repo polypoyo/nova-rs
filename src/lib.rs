@@ -13,6 +13,9 @@ pub mod rhi;
 pub mod settings;
 pub mod shaderpack;
 
+#[macro_use]
+extern crate dxgi;
+
 #[cfg(test)]
 mod tests {
     #[test]
