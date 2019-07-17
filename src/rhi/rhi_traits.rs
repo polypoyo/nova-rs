@@ -18,7 +18,7 @@ pub trait GraphicsApi {
     type PhysicalDevice: PhysicalDevice;
 
     /// Gets a list of all available graphics adapters
-    fn get_adapters() -> Vec<Self::PhysicalDevice>;
+    fn get_adapters(&self) -> Vec<Self::PhysicalDevice>;
 }
 
 /// An implementation of the rendering API. This will probably be a GPU card, but a software

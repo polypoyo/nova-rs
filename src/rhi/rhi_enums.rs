@@ -219,6 +219,7 @@ bitflags! {
         const STENCIL = 0x00000004;
     }
 }
+
 bitflags! {
     pub struct ShaderStageFlags: u32 {
         const VERTEX = 0x0001;
