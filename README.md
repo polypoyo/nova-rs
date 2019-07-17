@@ -18,8 +18,9 @@
 
 ## Purpose
 
-We set out to make a completely new renderer for minecraft aimed at giving the best tools to shaderpack developers
-to run their shaderpack as fast as is possible. This is a rewrite of the old [Nova Renderer](https://github.com/NovaMods/nova-renderer) project from C++ to Rust.
+We set out to make a completely new renderer for Minecraft aimed at giving more control and vastly better tooling to 
+shaderpack developers. This is a rewrite of the old [Nova Renderer](https://github.com/NovaMods/nova-renderer) project 
+from C++ to Rust.
 
 ### QuikFAQ
 
@@ -34,14 +35,14 @@ to run their shaderpack as fast as is possible. This is a rewrite of the old [No
 ## Development Status
 
 Nova Renderer is a passion project by the developers and as such does not have any set deadlines or release dates.
-We are still in early development of the rust rewrite and things may change at any moment. That all being said, it
+We are still in early development of the Rust rewrite and things may change at any moment. That all being said, it
 is still in active development.
 
 ## Developer Setup
 
 [Contributing](docs/contributing.md).
 
-You must have a rust 3.28+ nightly toolchain setup. If you want to develop for nova renderer you must also have
+You must have a Rust 3.28+ nightly toolchain setup. If you want to help develop the Nova Renderer you must also have
 rustfmt installed for that toolchain so the automatically installed pre-commit hook works.
 
 Please read the following to help get a feel for the project:
@@ -50,4 +51,4 @@ Please read the following to help get a feel for the project:
 - [Git Rules](docs/git.md). **These must be followed for your PR to be accepted.**
 - [Async Await Primer](docs/async_await.md). This project uses Rust's async/await feature throughout.
 
-Please contact us on discord if you want to help! We're very friendly :smile:
+Please contact us on Discord if you want to help! We're very friendly :smile:
