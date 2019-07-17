@@ -1,4 +1,4 @@
-# FAQ
+# Rust-FAQ
 
 ## Why switch to Rust?
 
