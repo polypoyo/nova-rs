@@ -16,6 +16,7 @@ mod vulkan {
 
     // But we have to bring this into the mod.rs file so other code can use it
 
+    mod vulkan_device;
     mod vulkan_physical_device;
 }
 
@@ -27,4 +28,4 @@ pub use rhi_traits::*;
 // Re-export entry points each supported API
 pub use vulkan::vulkan_graphics_api::VulkanGraphicsApi;
 
-mod use super::shaderpack;
+pub use super::shaderpack;

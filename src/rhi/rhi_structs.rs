@@ -26,7 +26,7 @@ pub struct PhysicalDeviceProperties {
 
     device_id: u32,
 
-    device_name: Box<str>,
+    device_name: String,
 
     device_type: PhysicalDeviceType,
 
