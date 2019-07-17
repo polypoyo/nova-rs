@@ -4,11 +4,13 @@ We are always welcome to new contributers. Please read the following before cont
 
 ### Contact Us
 
-If you want to contribute, it is recommended to drop us a line over on discord so we can help onboard you properly. It is not manditory however.
+If you want to contribute, we recommend that you drop us a line over on Discord so we can help onboard you properly. 
+However, we welcome pull requests from anyone, talking to us beforehand is not required
 
 ## Rust Setup
 
-You must have a rust 3.28+ nightly toolchain setup. You also must have rustfmt installed for that toolchain so the automatically installed pre-commit hook works. Cargo will use nightly automatically.
+You must have a Rust 3.28+ nightly toolchain setup. You also must have rustfmt installed for that toolchain so the 
+automatically installed pre-commit hook works. Cargo will use nightly automatically.
 
 Cargo is used as expected.
 
@@ -22,7 +24,7 @@ You do not have to manually call rustfmt, it will be applied when you commit you
 
 ## Project Guidelines
 
-These documents outline the purpose of the project and the rules you must adhear to.
+These documents outline the purpose of the project and the rules you must adhere to.
 
 #### Principles
 
