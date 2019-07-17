@@ -1,14 +1,16 @@
 use super::super::{DeviceCreationError, PhysicalDevice, PhysicalDeviceProperties};
 
 use ash::{
-    extensions::{
-        ext::DebugReport,
-        khr::{Swapchain, Win32Surface, XlibSurface},
-    },
+    extensions::{ext::DebugReport, khr::Swapchain},
     vk,
 };
 
-use super::vulkan_device;
+#[cfg(all(unix, not(target_os = "android")))]
+use ash::extensions::khr::XlibSurface;
+
+#[cfg(windows)]
+use ash::extensions::khr::Win32Surface;
+
 use crate::rhi::{vulkan::vulkan_device::VulkanDevice, PhysicalDeviceManufacturer, PhysicalDeviceType};
 
 pub struct VulkanPhysicalDevice {
@@ -126,7 +128,7 @@ impl PhysicalDevice for VulkanPhysicalDevice {
 }
 
 #[cfg(all(unix, not(target_os = "android")))]
-fn get_needed_extensions() -> Vec<*const u8> {
+pub fn get_needed_extensions() -> Vec<*const u8> {
     vec![
         Swapchain::name().as_ptr(),
         XlibSurface::name().as_ptr(),
@@ -135,7 +137,7 @@ fn get_needed_extensions() -> Vec<*const u8> {
 }
 
 #[cfg(windows)]
-fn get_needed_extensions() -> Vec<*const u8> {
+pub fn get_needed_extensions() -> Vec<*const u8> {
     vec![
         Swapchain::name().as_ptr(),
         Win32Surface::name().as_ptr(),

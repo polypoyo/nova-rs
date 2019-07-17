@@ -1,5 +1,7 @@
 use super::super::*;
-use std::collections::HashMap;
+use crate::rhi::shaderpack::*;
+use cgmath::Vector2;
+use std::collections::{hash_map::RandomState, HashMap};
 
 pub struct VulkanDevice;
 
@@ -36,7 +38,7 @@ impl Device for VulkanDevice {
         unimplemented!()
     }
 
-    fn create_renderpass(&self, data: RenderpassData) -> Result<Self::Renderpass, MemoryError> {
+    fn create_renderpass(&self, data: RenderPassCreationInfo) -> Result<Self::Renderpass, MemoryError> {
         unimplemented!()
     }
 
@@ -44,16 +46,16 @@ impl Device for VulkanDevice {
         &self,
         renderpass: Self::Renderpass,
         attachments: Vec<Self::Image>,
-        framebuffer_size: _,
+        framebuffer_size: Vector2<f32>,
     ) -> Result<Self::Framebuffer, MemoryError> {
         unimplemented!()
     }
 
     fn create_pipeline_interface(
         &self,
-        bindings: &HashMap<String, ResourceBindingDescription>,
-        color_attachments: &Vec<TextureAttachmentData>,
-        depth_texture: &Option<TextureAttachmentData>,
+        bindings: &HashMap<String, ResourceBindingDescription, RandomState>,
+        color_attachments: &Vec<TextureAttachmentInfo>,
+        depth_texture: &Option<TextureAttachmentInfo>,
     ) -> Result<Self::PipelineInterface, MemoryError> {
         unimplemented!()
     }
@@ -70,12 +72,12 @@ impl Device for VulkanDevice {
     fn create_pipeline(
         &self,
         pipeline_interface: Self::PipelineInterface,
-        data: _,
+        data: PipelineCreationInfo,
     ) -> Result<Self::Pipeline, PipelineCreationError> {
         unimplemented!()
     }
 
-    fn create_image(&self, data: ImageData) -> Result<Self::Image, MemoryError> {
+    fn create_image(&self, data: TextureCreateInfo) -> Result<Self::Image, MemoryError> {
         unimplemented!()
     }
 
