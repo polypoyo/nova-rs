@@ -83,6 +83,9 @@ pub enum QueueGettingError {
 
     #[fail(display = "The device does not support this queue type")]
     NotSupported,
+
+    #[fail(display = "Queue index is out of range")]
+    IndexOutOfRange,
 }
 
 /// All the errors you might get when allocating memory
@@ -99,6 +102,12 @@ pub enum AllocationError {
 
     #[fail(display = "Handle Invalid")]
     InvalidExternalHandle,
+
+    #[fail(display = "Memory mapping failed")]
+    MappingFailed,
+
+    #[fail(display = "No memory matching the requirements found")]
+    NoSuitableMemoryFound,
 }
 
 #[derive(Fail, Debug, Clone, Eq, PartialEq)]
