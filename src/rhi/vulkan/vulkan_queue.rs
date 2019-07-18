@@ -1,6 +1,10 @@
 use super::super::Queue;
 
-pub struct VulkanQueue;
+use ash::vk;
+
+pub struct VulkanQueue {
+    queue: vk::Queue,
+}
 
 impl Queue for VulkanQueue {
     type CommandList = ();

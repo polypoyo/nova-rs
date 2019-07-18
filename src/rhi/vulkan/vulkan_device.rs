@@ -1,6 +1,6 @@
 use super::{super::*, vulkan_queue::VulkanQueue};
 use crate::rhi::shaderpack::*;
-use ash::vk;
+use ash::{version::DeviceV1_0, vk};
 use cgmath::Vector2;
 use std::collections::{hash_map::RandomState, HashMap};
 
@@ -27,7 +27,22 @@ impl Device for VulkanDevice {
     type Fence = ();
 
     fn get_queue(&self, queue_type: QueueType, queue_index: u32) -> Result<Self::Queue, QueueGettingError> {
-        unimplemented!()
+        let queue_family_index = match queue_type {
+            QueueType::Graphics => self.graphics_queue_family_index,
+            QueueType::Copy => self.transfer_queue_family_index,
+            QueueType::Compute => {
+                if self.compute_queue_family_index.is_some() {
+                    self.compute_queue_family_index.unwrap()
+                } else {
+                    return Err(QueueGettingError::NotSupported);
+                }
+            }
+        };
+
+        assert_eq!(queue_index, 0, "Only queue index 0 is supported at the moment");
+        let queue = unsafe { self.device.get_device_queue(queue_family_index, queue_index) };
+
+        Ok(VulkanQueue { queue })
     }
 
     fn allocate_memory(
