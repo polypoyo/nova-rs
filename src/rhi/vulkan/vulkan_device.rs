@@ -64,7 +64,10 @@ impl Device for VulkanDevice {
             }
         };
 
-        assert_eq!(queue_index, 0, "Only queue index 0 is supported at the moment");
+        if queue_index > 0 {
+            // We only support queue index 0 at the moment
+            return Err(QueueGettingError::IndexOutOfRange);
+        }
         let queue = unsafe { self.device.get_device_queue(queue_family_index, queue_index) };
 
         Ok(VulkanQueue { queue })
@@ -103,9 +106,7 @@ impl Device for VulkanDevice {
         };
 
         if memory_type_index.is_none() {
-            // TODO: Maybe add an extra error, since we are technically out of memory (since we have 0 available), but
-            //       this is not very descriptive for what really happened here
-            return Err(AllocationError::OutOfDeviceMemory);
+            return Err(AllocationError::NoSuitableMemoryFound);
         }
 
         let alloc_info = vk::MemoryAllocateInfo::builder()
@@ -139,8 +140,7 @@ impl Device for VulkanDevice {
                     match mapped.err().unwrap() {
                         vk::Result::ERROR_OUT_OF_DEVICE_MEMORY => return Err(AllocationError::OutOfDeviceMemory),
                         vk::Result::ERROR_OUT_OF_HOST_MEMORY => return Err(AllocationError::OutOfHostMemory),
-                        // FIXME: Add error type for this case
-                        vk::Result::ERROR_MEMORY_MAP_FAILED => unimplemented!("To be done"),
+                        vk::Result::ERROR_MEMORY_MAP_FAILED => return Err(AllocationError::MappingFailed),
                         result => unreachable!("Invalid vk result returned: {:?}", result),
                     }
                 }
