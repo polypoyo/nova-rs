@@ -1,15 +1,13 @@
-use super::{
-    super::{
-        shaderpack::{PipelineCreationInfo, RenderPassCreationInfo, TextureAttachmentInfo, TextureCreateInfo},
-        *,
-    },
-    vulkan_memory::VulkanMemory,
-    vulkan_queue::VulkanQueue,
-};
-use alloc::collections::CollectionAllocErr::AllocErr;
-use ash::{version::DeviceV1_0, vk};
+use crate::rhi::shaderpack::*;
+use crate::rhi::vulkan::vulkan_memory::VulkanMemory;
+use crate::rhi::vulkan::vulkan_queue::VulkanQueue;
+use crate::rhi::*;
+
+use ash::version::DeviceV1_0;
+use ash::vk;
 use cgmath::Vector2;
-use std::collections::{hash_map::RandomState, HashMap};
+use std::collections::hash_map::RandomState;
+use std::collections::HashMap;
 
 pub struct VulkanDevice {
     instance: ash::Instance,
@@ -55,22 +53,19 @@ impl Device for VulkanDevice {
         let queue_family_index = match queue_type {
             QueueType::Graphics => self.graphics_queue_family_index,
             QueueType::Copy => self.transfer_queue_family_index,
-            QueueType::Compute => {
-                if self.compute_queue_family_index.is_some() {
-                    self.compute_queue_family_index.unwrap()
-                } else {
-                    return Err(QueueGettingError::NotSupported);
-                }
-            }
+            QueueType::Compute => match self.compute_queue_family_index {
+                None => Err(QueueGettingError::NotSupported),
+                Some(i) => i,
+            },
         };
 
         if queue_index > 0 {
             // We only support queue index 0 at the moment
-            return Err(QueueGettingError::IndexOutOfRange);
+            Err(QueueGettingError::IndexOutOfRange)
+        } else {
+            let queue = unsafe { self.device.get_device_queue(queue_family_index, queue_index) };
+            Ok(VulkanQueue { queue })
         }
-        let queue = unsafe { self.device.get_device_queue(queue_family_index, queue_index) };
-
-        Ok(VulkanQueue { queue })
     }
 
     fn allocate_memory(
@@ -105,50 +100,54 @@ impl Device for VulkanDevice {
             ),
         };
 
-        if memory_type_index.is_none() {
-            return Err(AllocationError::NoSuitableMemoryFound);
-        }
+        let memory_type_index = match memory_type_index {
+            None => return Err(AllocationError::NoSuitableMemoryFound),
+            Some(i) => i,
+        };
 
         let alloc_info = vk::MemoryAllocateInfo::builder()
             .allocation_size(size)
-            .memory_type_index(memory_type_index.unwrap())
+            .memory_type_index(memory_type_index)
             .build();
 
         let allocated = {
             let allocated = unsafe { self.device.allocate_memory(&alloc_info, None) };
-            if allocated.is_err() {
-                match allocated.err().unwrap() {
-                    vk::Result::ERROR_OUT_OF_HOST_MEMORY => return Err(AllocationError::OutOfHostMemory),
-                    vk::Result::ERROR_OUT_OF_DEVICE_MEMORY => return Err(AllocationError::OutOfDeviceMemory),
-                    vk::Result::ERROR_TOO_MANY_OBJECTS => return Err(AllocationError::TooManyObjects),
-                    vk::Result::ERROR_INVALID_EXTERNAL_HANDLE => return Err(AllocationError::InvalidExternalHandle),
-                    result => unreachable!("Invalid vk result returned: {:?}", result),
+            match allocated {
+                Err(result) => {
+                    return match result {
+                        vk::Result::ERROR_OUT_OF_HOST_MEMORY => Err(AllocationError::OutOfHostMemory),
+                        vk::Result::ERROR_OUT_OF_DEVICE_MEMORY => Err(AllocationError::OutOfDeviceMemory),
+                        vk::Result::ERROR_TOO_MANY_OBJECTS => Err(AllocationError::TooManyObjects),
+                        vk::Result::ERROR_INVALID_EXTERNAL_HANDLE => Err(AllocationError::InvalidExternalHandle),
+                        result => unreachable!("Invalid vk result returned: {:?}", result),
+                    };
                 }
+                Ok(v) => v,
             }
-
-            allocated.unwrap()
         };
 
         match memory_usage {
             MemoryUsage::LowFrequencyUpload | MemoryUsage::StagingBuffer => {
-                // TODO: Save allocated memory!
                 let mapped = unsafe {
                     self.device
-                        .map_memory(allocated, 0, vk::WHOLE_SIZE, vk::MemoryMapFlags(0))
+                        .map_memory(allocated, 0, vk::WHOLE_SIZE, 0u32 as vk::MemoryMapFlags)
                 };
-                if mapped.is_err() {
-                    match mapped.err().unwrap() {
-                        vk::Result::ERROR_OUT_OF_DEVICE_MEMORY => return Err(AllocationError::OutOfDeviceMemory),
-                        vk::Result::ERROR_OUT_OF_HOST_MEMORY => return Err(AllocationError::OutOfHostMemory),
-                        vk::Result::ERROR_MEMORY_MAP_FAILED => return Err(AllocationError::MappingFailed),
-                        result => unreachable!("Invalid vk result returned: {:?}", result),
-                    }
-                }
 
-                Ok(VulkanMemory {
-                    device: self.device.clone(),
-                    memory: allocated,
-                })
+                match mapped {
+                    Err(result) => {
+                        return match result {
+                            vk::Result::ERROR_OUT_OF_DEVICE_MEMORY => Err(AllocationError::OutOfDeviceMemory),
+                            vk::Result::ERROR_OUT_OF_HOST_MEMORY => Err(AllocationError::OutOfHostMemory),
+                            vk::Result::ERROR_MEMORY_MAP_FAILED => Err(AllocationError::MappingFailed),
+                            result => unreachable!("Invalid vk result returned: {:?}", result),
+                        };
+                    }
+                    Ok(mem) => Ok(VulkanMemory {
+                        // TODO: Save allocated memory!
+                        device: self.device.clone(),
+                        memory: allocated,
+                    }),
+                }
             }
             _ => Ok(VulkanMemory {
                 device: self.device.clone(),

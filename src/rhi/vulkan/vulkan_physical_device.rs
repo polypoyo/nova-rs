@@ -14,7 +14,7 @@ use ash::extensions::khr::Win32Surface;
 use crate::rhi::{
     vulkan::vulkan_device::VulkanDevice, PhysicalDeviceManufacturer, PhysicalDeviceType, VulkanGraphicsApi,
 };
-use ash::version::{DeviceV1_0, InstanceV1_0, InstanceV1_1};
+use ash::version::InstanceV1_0;
 
 pub struct VulkanPhysicalDevice {
     instance: ash::Instance,
@@ -168,14 +168,10 @@ impl PhysicalDevice for VulkanPhysicalDevice {
             .enabled_layer_names(VulkanGraphicsApi::get_layer_names().as_slice())
             .build();
 
-        let device: Result<ash::Device, vk::Result> =
-            unsafe { self.instance.create_device(self.phys_device, &device_create_info, None) };
-        if device.is_err() {
-            Err(DeviceCreationError::Failed)
-        } else {
-            Ok(VulkanDevice {
+        (unsafe { self.instance.create_device(self.phys_device, &device_create_info, None) })
+            .map(|device| VulkanDevice {
                 instance: self.instance.clone(),
-                device: device.unwrap(),
+                device,
                 graphics_queue_family_index: self.graphics_queue_family_index as u32,
                 transfer_queue_family_index: self.transfer_queue_family_index as u32,
                 compute_queue_family_index: if self.compute_queue_family_index != std::usize::MAX {
@@ -185,7 +181,7 @@ impl PhysicalDevice for VulkanPhysicalDevice {
                 },
                 memory_properties: unsafe { self.instance.get_physical_device_memory_properties(self.phys_device) },
             })
-        }
+            .map_err(|_| DeviceCreationError::Failed)
     }
 
     fn get_free_memory(&self) -> u64 {

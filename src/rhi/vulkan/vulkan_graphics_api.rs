@@ -1,18 +1,13 @@
-use super::super::GraphicsApi;
+use crate::rhi::vulkan::vulkan_physical_device;
+use crate::rhi::vulkan::vulkan_physical_device::VulkanPhysicalDevice;
+use crate::rhi::*;
 
-use super::vulkan_physical_device::{self, VulkanPhysicalDevice};
-use ash::{
-    version::{EntryV1_0, InstanceV1_0},
-    vk,
-};
-use std::{
-    ffi::{CStr, CString},
-    os::raw::{c_char, c_void},
-};
-
-use crate::rhi::PhysicalDevice;
 use ash::extensions::ext::DebugReport;
+use ash::version::{EntryV1_0, InstanceV1_0};
+use ash::vk;
 use log::debug;
+use std::ffi;
+use std::os::raw;
 
 unsafe extern "system" fn vulkan_debug_callback(
     _: vk::DebugReportFlagsEXT,
@@ -20,11 +15,11 @@ unsafe extern "system" fn vulkan_debug_callback(
     _: u64,
     _: usize,
     _: i32,
-    _: *const c_char,
-    p_message: *const c_char,
-    _: *mut c_void,
+    _: *const raw::c_char,
+    p_message: *const raw::c_char,
+    _: *mut raw::c_void,
 ) -> u32 {
-    debug!("{:?}", CStr::from_ptr(p_message));
+    debug!("{:?}", ffi::CStr::from_ptr(p_message));
     vk::FALSE
 }
 
@@ -43,7 +38,7 @@ pub struct VulkanGraphicsApi {
 impl VulkanGraphicsApi {
     pub fn get_layer_names() -> Vec<*const u8> {
         (if cfg!(debug_assertions) {
-            [CString::new("VK_LAYER_LUNARG_standard_validation").unwrap()]
+            [ffi::CString::new("VK_LAYER_LUNARG_standard_validation").unwrap()]
         } else {
             []
         })
@@ -67,7 +62,7 @@ impl VulkanGraphicsApi {
                 application_version.1,
                 application_version.2
             ))
-            .engine_name(CString::new("Nova Renderer").as_c_str())
+            .engine_name(ffi::CString::new("Nova Renderer").as_c_str())
             .engine_version(ash::vk_make_version!(0, 1, 0))
             .api_version(ash::vk_make_version!(1, 1, 0))
             .build();
@@ -78,33 +73,25 @@ impl VulkanGraphicsApi {
             .enabled_extension_names(&extension_names_raw)
             .build();
 
-        let entry = {
-            let entry = ash::Entry::new();
-            if entry.is_err() {
+        let entry = match ash::Entry::new() {
+            Err(error) => {
                 return Err(VulkanGraphicsApiCreationError::LoadingError(
-                    [entry.err().unwrap().0].to_vec(),
+                    [error.unwrap().0].to_vec(),
                 ));
             }
-
-            entry.unwrap()
+            Ok(v) => v,
         };
 
-        let instance = {
-            let instance = unsafe { entry.create_instance(&create_info, None) };
-            if instance.is_err() {
-                return match instance.err().unwrap() {
-                    ash::InstanceError::LoadError(errors) => {
-                        return Err(VulkanGraphicsApiCreationError::LoadingError(
-                            errors.iter().map(|r| String::from(r)).collect(),
-                        ));
-                    }
-                    ash::InstanceError::VkError(result) => {
-                        return Err(VulkanGraphicsApiCreationError::VkFailedResult(result));
-                    }
+        let instance = match unsafe { entry.create_instance(&create_info, None) } {
+            Err(error) => {
+                return match error {
+                    ash::InstanceError::LoadError(errors) => Err(VulkanGraphicsApiCreationError::LoadingError(
+                        errors.iter().map(|raw| String::from(raw)).collect(),
+                    )),
+                    ash::InstanceError::VkError(result) => Err(VulkanGraphicsApiCreationError::VkFailedResult(result)),
                 };
             }
-
-            instance.unwrap()
+            Ok(v) => v,
         };
 
         let debug_callback = if cfg!(debug_assertions) {
@@ -119,14 +106,10 @@ impl VulkanGraphicsApi {
                 .pfn_callback(Some(vulkan_debug_callback));
 
             let debug_report_loader = DebugReport::new(&entry, &instance);
-            let debug_callback = unsafe { debug_report_loader.create_debug_report_callback(&debug_info, None) };
-            if debug_callback.is_err() {
-                return Err(VulkanGraphicsApiCreationError::VkFailedResult(
-                    debug_callback.err().unwrap(),
-                ));
+            match unsafe { debug_report_loader.create_debug_report_callback(&debug_info, None) } {
+                Err(error) => return Err(VulkanGraphicsApiCreationError::VkFailedResult(error)),
+                Ok(v) => Some(v),
             }
-
-            Some(debug_callback.unwrap())
         } else {
             None
         };

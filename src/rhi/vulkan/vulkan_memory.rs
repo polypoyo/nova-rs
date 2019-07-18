@@ -1,4 +1,4 @@
-use super::super::{BufferCreateInfo, Memory, MemoryError};
+use crate::rhi::*;
 use ash::vk;
 
 pub struct VulkanMemory {
