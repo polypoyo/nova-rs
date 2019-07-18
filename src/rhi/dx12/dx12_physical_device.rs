@@ -33,9 +33,13 @@ impl PhysicalDevice for Dx12PhysicalDevice {
     fn create_logical_device(&self) -> Result<Dx12Device, DeviceCreationError> {
         let (device, hr) = d3d12::Device::create(self.adapter, d3d12::FeatureLevel::L11_0);
         if winerror::SUCCEEDED(hr) {
-            Ok(Dx12Device::new(device))
+            Ok(Dx12Device::new(self, device))
         } else {
             Err(DeviceCreationError::Failed)
         }
+    }
+
+    fn get_free_memory(&self) -> u64 {
+        0
     }
 }

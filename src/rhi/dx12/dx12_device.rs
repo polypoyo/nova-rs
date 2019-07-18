@@ -14,15 +14,41 @@ use crate::{
     shaderpack,
 };
 use cgmath::Vector2;
-use std::collections::{hash_map::RandomState, HashMap};
+use std::{
+    collections::{hash_map::RandomState, HashMap},
+    mem,
+};
+use winapi::{
+    shared::{dxgi1_2, dxgi1_4},
+    um::d3d12 as d3d12_raw,
+};
 
 pub struct Dx12Device {
+    /// Graphics adapter that we're using
+    phys_device: &Dx12PhysicalDevice,
+
+    /// D3D12 device that we're wrapping
     device: d3d12::Device,
+
+    /// Increment size of an RTV descriptor
+    rtv_descriptor_size: u32,
+
+    /// Increment size of a CBV, UAV, or SRV descriptor
+    shader_resource_descriptor_size: u32,
 }
 
 impl Dx12Device {
-    pub fn new(device: d3d12::Device) -> Self {
-        Dx12Device { device }
+    pub fn new(phys_device: &Dx12PhysicalDevice, device: d3d12::Device) -> Self {
+        let rtv_descriptor_size = device.get_descriptor_handle_increment_size(d3d12::descriptor::HeapType::Rtv);
+        let shader_resource_descriptor_size =
+            device.get_descriptor_handle_increment_size(d3d12::descriptor::HeapType::CbvSrvUav);
+
+        Dx12Device {
+            phys_device,
+            device,
+            rtv_descriptor_size,
+            shader_resource_descriptor_size,
+        }
     }
 }
 
@@ -46,23 +72,61 @@ impl Device for Dx12Device {
             QueueType::Copy => d3d12::command_list::CmdListType::Copy,
         };
 
-        let queue = self.device.create_command_queue(
+        let (queue, hr) = self.device.create_command_queue(
             queue_type,
             d3d12::queue::Priority::Normal,
             d3d12::queue::CommandQueueFlags::empty(),
             0,
         );
-
-        unimplemented!()
+        if winerror::SUCCESS(hr) {
+            Ok(Dx12Queue::new(queue))
+        } else {
+            Err(QueueGettingError::OutOfMemory)
+        }
     }
 
-    fn allocate_memory<T>(
+    fn allocate_memory(
         &self,
         size: u64,
         memory_usage: MemoryUsage,
         allowed_objects: ObjectType,
     ) -> Result<Dx12Memory, AllocationError> {
-        unimplemented!()
+        let heap_properties = match memory_usage {
+            MemoryUsage::DeviceOnly => d3d12_raw::D3D12_HEAP_PROPERTIES {
+                Type: d3d12_raw::D3D12_HEAP_TYPE_DEFAULT,
+                CPUPageProperty: d3d12_raw::D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE,
+                MemoryPoolPreference: d3d12_raw::D3D12_MEMORY_POOL_L1, // TODO: Find a way to handle UMA
+                CreationNodeMask: 0,
+                VisibleNodeMask: 0,
+            },
+            MemoryUsage::LowFrequencyUpload => d3d12_raw::D3D12_HEAP_PROPERTIES {
+                Type: d3d12_raw::D3D12_HEAP_TYPE_UPLOAD,
+                CPUPageProperty: d3d12_raw::D3D12_CPU_PAGE_PROPERTY_WRITE_COMBINE,
+                MemoryPoolPreference: d3d12_raw::D3D12_MEMORY_POOL_L1, // TODO: Find a way to handle UMA
+                CreationNodeMask: 0,
+                VisibleNodeMask: 0,
+            },
+            MemoryUsage::StagingBuffer => d3d12_raw::D3D12_HEAP_PROPERTIES {
+                Type: d3d12_raw::D3D12_HEAP_TYPE_UPLOAD,
+                CPUPageProperty: d3d12_raw::D3D12_CPU_PAGE_PROPERTY_WRITE_COMBINE,
+                MemoryPoolPreference: d3d12_raw::D3D12_MEMORY_POOL_L0,
+                CreationNodeMask: 0,
+                VisibleNodeMask: 0,
+            },
+        };
+
+        let heap_flags = match allowed_objects {
+            ObjectType::Buffer => d3d12_raw::D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS,
+            ObjectType::Texture => d3d12_raw::D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES,
+            ObjectType::Attachment => d3d12_raw::D3D12_HEAP_FLAG_ALLOW_ONLY_RT_DS_TEXTURES,
+            ObjectType::SwapchainSurface => {
+                d3d12_raw::D3D12_HEAP_FLAG_ALLOW_ONLY_RT_DS_TEXTURES | d3d12_raw::D3D12_HEAP_FLAG_ALLOW_DISPLAY
+            }
+            ObjectType::Any => d3d12_raw::D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES,
+        };
+
+        // Ensure we have enough free memory for the requested allocation
+        let free_memory = self.phys_device.get_free_memory();
     }
 
     fn create_command_allocator(

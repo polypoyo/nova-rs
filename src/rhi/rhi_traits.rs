@@ -47,6 +47,9 @@ pub trait PhysicalDevice {
     /// requirements varies significantly by API. Thus, this method doesn't take a create info
     /// struct of any sort
     fn create_logical_device(&self) -> Result<Self::Device, DeviceCreationError>;
+
+    /// Gets the amount of free VRAM on this physical device
+    fn get_free_memory(&self) -> u64;
 }
 
 /// The logical device that we're rendering with
