@@ -18,6 +18,7 @@ mod vulkan {
 
     mod vulkan_device;
     mod vulkan_physical_device;
+    mod vulkan_queue;
 }
 
 // Re-exports

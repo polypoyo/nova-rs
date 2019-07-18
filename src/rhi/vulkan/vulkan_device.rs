@@ -1,4 +1,4 @@
-use super::super::*;
+use super::{super::*, vulkan_queue::VulkanQueue};
 use crate::rhi::shaderpack::*;
 use ash::vk;
 use cgmath::Vector2;
@@ -7,16 +7,14 @@ use std::collections::{hash_map::RandomState, HashMap};
 pub struct VulkanDevice {
     instance: ash::Instance,
     device: ash::Device,
-}
 
-impl VulkanDevice {
-    pub fn new(instance: ash::Instance, device: ash::Device) -> VulkanDevice {
-        VulkanDevice { instance, device }
-    }
+    graphics_queue_family_index: u32,
+    transfer_queue_family_index: u32,
+    compute_queue_family_index: Option<u32>,
 }
 
 impl Device for VulkanDevice {
-    type Queue = ();
+    type Queue = VulkanQueue;
     type Memory = ();
     type CommandAllocator = ();
     type Image = ();
@@ -28,11 +26,11 @@ impl Device for VulkanDevice {
     type Semaphore = ();
     type Fence = ();
 
-    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<Self::Queue, QueueGettingError> {
+    fn get_queue(&self, queue_type: QueueType, queue_index: u32) -> Result<Self::Queue, QueueGettingError> {
         unimplemented!()
     }
 
-    fn allocate_memory<T>(
+    fn allocate_memory(
         &self,
         size: u64,
         memory_usage: MemoryUsage,

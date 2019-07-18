@@ -14,7 +14,7 @@ use ash::extensions::khr::Win32Surface;
 use crate::rhi::{
     vulkan::vulkan_device::VulkanDevice, PhysicalDeviceManufacturer, PhysicalDeviceType, VulkanGraphicsApi,
 };
-use ash::version::{InstanceV1_0, InstanceV1_1};
+use ash::version::{DeviceV1_0, InstanceV1_0, InstanceV1_1};
 
 pub struct VulkanPhysicalDevice {
     instance: ash::Instance,
@@ -173,7 +173,17 @@ impl PhysicalDevice for VulkanPhysicalDevice {
         if device.is_err() {
             Err(DeviceCreationError::Failed)
         } else {
-            Ok(VulkanDevice::new(self.instance.clone(), device.unwrap()))
+            Ok(VulkanDevice {
+                instance: self.instance.clone(),
+                device: device.unwrap(),
+                graphics_queue_family_index: self.graphics_queue_family_index as u32,
+                transfer_queue_family_index: self.transfer_queue_family_index as u32,
+                compute_queue_family_index: if self.compute_queue_family_index != std::usize::MAX {
+                    Some(self.compute_queue_family_index as u32)
+                } else {
+                    None
+                },
+            })
         }
     }
 
