@@ -80,6 +80,9 @@ pub enum MemoryError {
 pub enum QueueGettingError {
     #[fail(display = "The device does not have enough memory to get you the queue you want.")]
     OutOfMemory,
+
+    #[fail(display = "The device does not support this queue type")]
+    NotSupported,
 }
 
 /// All the errors you might get when allocating memory
