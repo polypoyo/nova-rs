@@ -2,7 +2,7 @@
 
 This document outlines conventions that we use for rust. It is closely tied with the API guidelines
 laid out by the [Rust Language Nursery](https://rust-lang-nursery.github.io/api-guidelines/). If
-this document does not specify something, that follow that document. That being said:
+this document does not specify something, then follow that document. That being said:
 
 **THE CLARITY OF THE CODE IS MORE IMPORTANT THAN ANY OF THESE CONVENTIONS!** If breaking the conventions
 results in better, cleaner, more intelligible code, do it. 
@@ -23,6 +23,8 @@ use std::io;
 The exception to this rule is if the module is part of your own crate/module. When importing your own
 crate, use globs, as you are bound to include many things. However, please use your discretion and if
 the modules get too large you should no longer use individual imports and instead import modules.
+
+Do **not** use `super`. Use absolute paths starting from `crate`.
 
 ```rust
 use crate::module_a::*;
