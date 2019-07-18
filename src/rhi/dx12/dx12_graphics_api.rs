@@ -1,4 +1,7 @@
-use winapi::shared::{dxgi, dxgi1_4};
+use d3d12;
+use winapi::shared::{dxgi1_3, dxgi1_4, winerror};
+
+use log::error;
 
 use crate::rhi::GraphicsApi;
 
@@ -6,14 +9,16 @@ use super::dx12_physical_device::Dx12PhysicalDevice;
 
 #[derive(Debug, Clone, Eq)]
 pub struct Dx12GraphicsApi {
-    factory: native::WeakPtr<dxgi1_4::IDXGIFactory4>,
+    factory: d3d12::WeakPtr<dxgi1_4::IDXGIFactory4>,
 }
 
 impl Dx12GraphicsApi {
     fn new() -> Self {
-        let factory: dxgi1_4::IDXGIFactory4;
-        unsafe {
-            dxgi1_2::CreateDXGIFactory2(0, &dxgi1_4::IDXGIFactory4::uuidof(), factory.mut_void());
+        let mut factory = d3d12::WeakPtr::<dxgi1_4::IDXGIFactory4>::null();
+        let hr = unsafe { dxgi1_3::CreateDXGIFactory2(0, &dxgi1_4::IDXGIFactory4::uuidof(), factory.mut_void()) };
+
+        if !winerror::SUCCEEDED(hr) {
+            error!("Failed to create DXGI Factory: {:?}", hr);
         }
 
         Dx12GraphicsApi { factory }
