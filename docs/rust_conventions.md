@@ -24,6 +24,8 @@ The exception to this rule is if the module is part of your own crate/module. Wh
 crate, use globs, as you are bound to include many things. However, please use your discretion and if
 the modules get too large you should no longer use individual imports and instead import modules.
 
+Do **not** use `super`. Use absolute paths starting from `crate`.
+
 ```rust
 use crate::module_a::*;
 use crate::module_b::*;
