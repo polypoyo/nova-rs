@@ -193,6 +193,7 @@ pub trait Device {
 
     /// Creates a new Fence
     fn create_fence(&self) -> Result<Self::Fence, MemoryError>;
+
     /// Creates the specified number of Fences
     ///
     /// # Parameters
@@ -338,9 +339,6 @@ pub trait CommandList {
     ///
     /// # Parameters
     ///
-    /// Note: buffers you call this method on must _not_ be device local, because they must be
-    /// CPU-addressable
-    ///
     /// * `destination_buffer` - The buffer to write data to
     /// * `destination_offset` - The number of bytes from the start of `destination_buffer` to write to
     /// * `source_buffer` - The buffer to read data from
@@ -395,6 +393,7 @@ pub trait CommandList {
     ///
     /// * `buffers` - The buffers to bind
     fn bind_vertex_buffers(buffers: Vec<Self::Buffer>);
+
     /// Binds an index buffer
     ///
     /// # Parameters
