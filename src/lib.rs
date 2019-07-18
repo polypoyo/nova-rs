@@ -6,10 +6,10 @@
 #![deny(rust_2018_idioms)]
 #![warn(unused)]
 
-extern crate d3d12;
+use d3d12;
 
 #[macro_use]
-extern crate log;
+use log;
 
 pub mod debugging;
 pub mod loading;

@@ -1,11 +1,12 @@
 use crate::rhi::{DeviceCreationError, PhysicalDevice, PhysicalDeviceProperties};
 
 use super::dx12_device::Dx12Device;
-use winapi::shared::dxgi1_2;
+use d3d12::Device;
+use winapi::shared::{dxgi1_2, winerror};
 
 /// A physical device which supports DX12
 pub struct Dx12PhysicalDevice {
-    adapter: dxgi1_2::IDXGIAdapter2,
+    adapter: d3d12::WeakPtr<dxgi1_2::IDXGIAdapter2>,
 }
 
 impl PhysicalDevice for Dx12PhysicalDevice {
@@ -16,10 +17,19 @@ impl PhysicalDevice for Dx12PhysicalDevice {
     }
 
     fn can_be_used_by_nova(&self) -> bool {
-        unimplemented!()
+        // TODO: Something more in depth
+        match self.create_logical_device() {
+            Ok(_) => true,
+            Err(_) => false,
+        }
     }
 
     fn create_logical_device(&self) -> Result<Dx12Device, DeviceCreationError> {
-        unimplemented!()
+        let (device, hr) = d3d12::Device::create(self.adapter, d3d12::FeatureLevel::L11_0);
+        if !winerror::SUCCEEDED(hr) {
+            Err(DeviceCreationError::Failed)
+        }
+
+        Ok(Dx12Device { device })
     }
 }

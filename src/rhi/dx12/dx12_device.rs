@@ -16,7 +16,9 @@ use crate::{
 use cgmath::Vector2;
 use std::collections::{hash_map::RandomState, HashMap};
 
-pub struct Dx12Device {}
+pub struct Dx12Device {
+    device: d3d12::Device,
+}
 
 impl Device for Dx12Device {
     type Queue = Dx12Queue;
