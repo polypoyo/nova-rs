@@ -2,7 +2,7 @@
 
 This document outlines conventions that we use for rust. It is closely tied with the API guidelines
 laid out by the [Rust Language Nursery](https://rust-lang-nursery.github.io/api-guidelines/). If
-this document does not specify something, than follow that document. That being said:
+this document does not specify something, then follow that document. That being said:
 
 **THE CLARITY OF THE CODE IS MORE IMPORTANT THAN ANY OF THESE CONVENTIONS!** If breaking the conventions
 results in better, cleaner, more intelligible code, do it. 
