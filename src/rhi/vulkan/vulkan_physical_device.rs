@@ -183,6 +183,7 @@ impl PhysicalDevice for VulkanPhysicalDevice {
                 } else {
                     None
                 },
+                memory_properties: unsafe { self.instance.get_physical_device_memory_properties(self.phys_device) },
             })
         }
     }
@@ -192,7 +193,7 @@ impl PhysicalDevice for VulkanPhysicalDevice {
         //       on windows this could be done using DXGI (also works with vulkan according to stackoverflow),
         //       for linux a way has yet to be found
         let properties: vk::PhysicalDeviceMemoryProperties =
-            self.instance.get_physcial_device_memory_properties(self.phys_device);
+            unsafe { self.instance.get_physical_device_memory_properties(self.phys_device) };
         properties
             .memory_heaps
             .iter()

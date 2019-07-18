@@ -152,7 +152,7 @@ impl GraphicsApi for VulkanGraphicsApi {
         devices
             .unwrap()
             .iter()
-            .map(|d| VulkanPhysicalDevice::new(self.instance.handle(), *d))
+            .map(|d| VulkanPhysicalDevice::new(self.instance, *d))
             .filter(|d| d.can_be_used_by_nova())
             .collect()
     }
