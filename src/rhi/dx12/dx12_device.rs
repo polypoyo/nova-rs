@@ -8,7 +8,7 @@ use crate::{
             dx12_semaphore::Dx12Semaphore,
         },
         AllocationError, CommandAllocatorCreateInfo, DescriptorPoolCreationError, DescriptorSetWrite, Device,
-        MemoryError, MemoryUsage, ObjectType, PhysicalDevice, PipelineCreationError, QueueGettingError,
+        MemoryError, MemoryUsage, ObjectType, PhysicalDevice, PipelineCreationError, QueueGettingError, QueueType,
         ResourceBindingDescription,
     },
     shaderpack,
@@ -18,6 +18,12 @@ use std::collections::{hash_map::RandomState, HashMap};
 
 pub struct Dx12Device {
     device: d3d12::Device,
+}
+
+impl Dx12Device {
+    pub fn new(device: d3d12::Device) -> Self {
+        Dx12Device { device }
+    }
 }
 
 impl Device for Dx12Device {
@@ -33,7 +39,20 @@ impl Device for Dx12Device {
     type Semaphore = Dx12Semaphore;
     type Fence = Dx12Fence;
 
-    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<Dx12Queue, QueueGettingError> {
+    fn get_queue(&self, queue_type: QueueType, queue_index: u32) -> Result<Dx12Queue, QueueGettingError> {
+        let queue_type = match queue_type {
+            QueueType::Graphics => d3d12::command_list::CmdListType::Direct,
+            QueueType::Compute => d3d12::command_list::CmdListType::Compute,
+            QueueType::Copy => d3d12::command_list::CmdListType::Copy,
+        };
+
+        let queue = self.device.create_command_queue(
+            queue_type,
+            d3d12::queue::Priority::Normal,
+            d3d12::queue::CommandQueueFlags::empty(),
+            0,
+        );
+
         unimplemented!()
     }
 

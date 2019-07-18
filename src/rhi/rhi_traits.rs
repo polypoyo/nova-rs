@@ -73,9 +73,9 @@ pub trait Device {
     ///
     /// # Parameters
     ///
-    /// * `queue_family_index` - The queue family index to get a queue from
+    /// * `queue_type` - The type of queue you want
     /// * `queue_index` - The index of the queue to get from the selected queue family
-    fn get_queue(&self, queue_family_index: u32, queue_index: u32) -> Result<Self::Queue, QueueGettingError>;
+    fn get_queue(&self, queue_type: QueueType, queue_index: u32) -> Result<Self::Queue, QueueGettingError>;
 
     /// Allocates memory from the graphics API
     ///
@@ -87,7 +87,7 @@ pub trait Device {
     /// * `memory_usage` - The usage you want the memory to be usable for
     /// * `allowed_objects` - The types of objects you want to allow from this memory. Enforcing
     /// this is up to the caller
-    fn allocate_memory<T>(
+    fn allocate_memory(
         &self,
         size: u64,
         memory_usage: MemoryUsage,

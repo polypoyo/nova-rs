@@ -36,7 +36,7 @@ impl GraphicsApi for Dx12GraphicsApi {
     type PhysicalDevice = Dx12PhysicalDevice;
 
     fn get_adapters(&self) -> Vec<Dx12PhysicalDevice> {
-        let mut adapters: Vec<Dx12PhysicalDevice>;
+        let mut adapters: Vec<Dx12PhysicalDevice> = vec![];
 
         let mut cur_adapter = 0;
         loop {
@@ -57,7 +57,7 @@ impl GraphicsApi for Dx12GraphicsApi {
                 continue;
             }
 
-            let phys_device = Dx12PhysicalDevice { adapter: adapter2 };
+            let phys_device = Dx12PhysicalDevice::new(adapter2);
 
             if phys_device.can_be_used_by_nova() {
                 adapters.push(phys_device);

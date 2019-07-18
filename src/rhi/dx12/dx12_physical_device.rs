@@ -9,6 +9,12 @@ pub struct Dx12PhysicalDevice {
     adapter: d3d12::WeakPtr<dxgi1_2::IDXGIAdapter2>,
 }
 
+impl Dx12PhysicalDevice {
+    pub fn new(adapter: d3d12::WeakPtr<dxgi1_2::IDXGIAdapter2>) -> Self {
+        Dx12PhysicalDevice { adapter }
+    }
+}
+
 impl PhysicalDevice for Dx12PhysicalDevice {
     type Device = Dx12Device;
 
@@ -26,10 +32,10 @@ impl PhysicalDevice for Dx12PhysicalDevice {
 
     fn create_logical_device(&self) -> Result<Dx12Device, DeviceCreationError> {
         let (device, hr) = d3d12::Device::create(self.adapter, d3d12::FeatureLevel::L11_0);
-        if !winerror::SUCCEEDED(hr) {
+        if winerror::SUCCEEDED(hr) {
+            Ok(Dx12Device::new(device))
+        } else {
             Err(DeviceCreationError::Failed)
         }
-
-        Ok(Dx12Device { device })
     }
 }

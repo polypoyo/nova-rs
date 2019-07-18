@@ -6,11 +6,6 @@
 #![deny(rust_2018_idioms)]
 #![warn(unused)]
 
-use d3d12;
-
-#[macro_use]
-use log;
-
 pub mod debugging;
 pub mod loading;
 pub mod logging;
