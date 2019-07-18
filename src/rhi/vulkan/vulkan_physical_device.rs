@@ -125,6 +125,20 @@ impl PhysicalDevice for VulkanPhysicalDevice {
     fn create_logical_device(&self) -> Result<Self::Device, DeviceCreationError> {
         unimplemented!()
     }
+
+    fn get_free_memory(&self) -> u64 {
+        // TODO: This just return all available memory, vulkan does not provide a way to query free memory
+        //       on windows this could be done using DXGI (also works with vulkan according to stackoverflow),
+        //       for linux a way has yet to be found
+        let properties: vk::PhysicalDeviceMemoryProperties =
+            self.instance.get_physcial_device_memory_properties(self.phys_device);
+        properties
+            .memory_heaps
+            .iter()
+            .filter(|h| h.flags & vk::MemoryHeapFlags::DEVICE_LOCAL)
+            .map(|h| h.size)
+            .sum()
+    }
 }
 
 #[cfg(all(unix, not(target_os = "android")))]
