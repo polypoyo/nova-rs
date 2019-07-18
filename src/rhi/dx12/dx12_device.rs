@@ -12,7 +12,7 @@ use std::collections::{hash_map::RandomState, HashMap};
 
 pub struct Dx12Device {}
 
-impl Device for Dx12PhysicalDevice {
+impl Device for Dx12Device {
     type Queue = Dx12Queue;
     type Memory = Dx12Memory;
     type CommandAllocator = Dx12CommandAllocator;

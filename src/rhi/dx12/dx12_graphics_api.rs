@@ -1,21 +1,22 @@
-use dxgi;
+use winapi::shared::{dxgi, dxgi1_4};
 
 use crate::rhi::GraphicsApi;
 
 use super::dx12_physical_device::Dx12PhysicalDevice;
 
 #[derive(Debug, Clone, Eq)]
-pub struct Dx12GraphicsApi {}
+pub struct Dx12GraphicsApi {
+    factory: native::WeakPtr<dxgi1_4::IDXGIFactory4>,
+}
 
 impl Dx12GraphicsApi {
     fn new() -> Self {
-
-        let dxgi_adapter: dxgi::IDXGIAdapter2;
+        let factory: dxgi1_4::IDXGIFactory4;
         unsafe {
-            dxgi::CreateDXGIFactory2(0, #[iid_ppv_args(&dxgi_adapter)]);
+            dxgi1_2::CreateDXGIFactory2(0, &dxgi1_4::IDXGIFactory4::uuidof(), factory.mut_void());
         }
 
-        Dx12GraphicsApi{}
+        Dx12GraphicsApi { factory }
     }
 }
 
