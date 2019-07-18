@@ -1,9 +1,19 @@
 use super::super::*;
 use crate::rhi::shaderpack::*;
+use ash::vk;
 use cgmath::Vector2;
 use std::collections::{hash_map::RandomState, HashMap};
 
-pub struct VulkanDevice;
+pub struct VulkanDevice {
+    instance: ash::Instance,
+    device: ash::Device,
+}
+
+impl VulkanDevice {
+    pub fn new(instance: ash::Instance, device: ash::Device) -> VulkanDevice {
+        VulkanDevice { instance, device }
+    }
+}
 
 impl Device for VulkanDevice {
     type Queue = ();

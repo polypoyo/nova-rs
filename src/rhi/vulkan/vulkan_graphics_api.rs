@@ -41,17 +41,22 @@ pub struct VulkanGraphicsApi {
 }
 
 impl VulkanGraphicsApi {
+    pub fn get_layer_names() -> Vec<*const u8> {
+        (if cfg!(debug_assertions) {
+            [CString::new("VK_LAYER_LUNARG_standard_validation").unwrap()]
+        } else {
+            []
+        })
+        .iter()
+        .map(|n| n.as_ptr())
+        .collect()
+    }
+
     pub fn new(
         application_name: String,
         application_version: (u32, u32, u32),
     ) -> Result<VulkanGraphicsApi, VulkanGraphicsApiCreationError> {
-        let layer_names = if cfg!(debug_assertions) {
-            [CString::new("VK_LAYER_LUNARG_standard_validation").unwrap()]
-        } else {
-            []
-        };
-
-        let layer_names_raw = layer_names.iter().map(|n| n.as_ptr()).collect();
+        let layer_names_raw = VulkanGraphicsApi::get_layer_names().as_slice();
 
         let extension_names_raw = vulkan_physical_device::get_needed_extensions();
 
@@ -138,21 +143,17 @@ impl GraphicsApi for VulkanGraphicsApi {
     type PhysicalDevice = VulkanPhysicalDevice;
 
     fn get_adapters(&self) -> Vec<VulkanPhysicalDevice> {
-        let mut devices = {
-            let devices = unsafe { self.instance.enumerate_physical_devices() };
-            if devices.is_err() {
-                // TODO: The current trait doesn't allow us to return an error, what to do?
-                return Vec::new();
-            }
-
-            devices
-                .unwrap()
-                .iter()
-                .map(|d| VulkanPhysicalDevice::new(self.instance.handle(), *d))
-                .filter(|d| d.can_be_used_by_nova())
-                .collect()
-        };
+        let devices = unsafe { self.instance.enumerate_physical_devices() };
+        if devices.is_err() {
+            // TODO: The current trait doesn't allow us to return an error, what to do?
+            return Vec::new();
+        }
 
         devices
+            .unwrap()
+            .iter()
+            .map(|d| VulkanPhysicalDevice::new(self.instance.handle(), *d))
+            .filter(|d| d.can_be_used_by_nova())
+            .collect()
     }
 }
