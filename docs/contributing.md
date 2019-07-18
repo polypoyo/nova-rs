@@ -29,12 +29,14 @@ These documents outline the purpose of the project and the rules you must adhere
 #### Principles
 
 - [The Project Charter](docs/project_charter.md).
+- [Project Pipeline](docs/project_pipeline.md). Don't know what to do? Look here!
 
 #### Rules
 
 **These must be followed for your PR to be accepted.**
 
-- [Git Rules](docs/git.md). 
+- [Git Rules/Cheatsheet](docs/git.md).
+- [Rust Conventions](docs/rust_conventions.md). 
 
 ## Primers
 
