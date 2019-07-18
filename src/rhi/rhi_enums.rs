@@ -80,6 +80,9 @@ pub enum MemoryError {
 pub enum QueueGettingError {
     #[fail(display = "The device does not have enough memory to get you the queue you want.")]
     OutOfMemory,
+
+    #[fail(display = "The device does not support this queue type")]
+    NotSupported,
 }
 
 /// All the errors you might get when allocating memory
@@ -219,6 +222,7 @@ bitflags! {
         const STENCIL = 0x00000004;
     }
 }
+
 bitflags! {
     pub struct ShaderStageFlags: u32 {
         const VERTEX = 0x0001;
