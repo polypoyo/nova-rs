@@ -3,7 +3,8 @@
 set -e
 
 hooks_diff="$(git diff HEAD -- tools/git-hooks)"
-if [[ -n "${hooks_diff}" ]]; then
+hooks_revision_diff="$(git diff HEAD -- tools/git-hooks/hooks-revision)"
+if [[ -n "${hooks_diff}" ]] && [[ "${hooks_revision_diff}" != "${hooks_diff}" ]]; then
     echo -e "\e[32;1mDetected change in tools/hooks, marking changed and installing new hooks\e[0m"
     rm .git/hooks/*
     touch .git/hooks/.changed
