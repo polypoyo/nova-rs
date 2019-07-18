@@ -1,13 +1,19 @@
-use crate::rhi::{
-    dx12::{
-        dx12_command_allocator::Dx12CommandAllocator, dx12_fence::Dx12Fence, dx12_framebuffer::Dx12Framebuffer,
-        dx12_image::Dx12Image, dx12_memory::Dx12Memory, dx12_physical_device::Dx12PhysicalDevice,
-        dx12_pipeline::Dx12Pipeline, dx12_pipeline_interface::Dx12PipelineInterface, dx12_queue::Dx12Queue,
-        dx12_renderpass::Dx12Renderpass, dx12_semaphore::Dx12Semaphore,
+use crate::{
+    rhi::{
+        dx12::{
+            dx12_command_allocator::Dx12CommandAllocator, dx12_descriptor_pool::Dx12DescriptorPool,
+            dx12_fence::Dx12Fence, dx12_framebuffer::Dx12Framebuffer, dx12_image::Dx12Image, dx12_memory::Dx12Memory,
+            dx12_physical_device::Dx12PhysicalDevice, dx12_pipeline::Dx12Pipeline,
+            dx12_pipeline_interface::Dx12PipelineInterface, dx12_queue::Dx12Queue, dx12_renderpass::Dx12Renderpass,
+            dx12_semaphore::Dx12Semaphore,
+        },
+        AllocationError, CommandAllocatorCreateInfo, DescriptorPoolCreationError, DescriptorSetWrite, Device,
+        MemoryError, MemoryUsage, ObjectType, PhysicalDevice, PipelineCreationError, QueueGettingError,
+        ResourceBindingDescription,
     },
-    AllocationError, CommandAllocatorCreateInfo, DescriptorPoolCreationError, DescriptorSetWrite, Device, MemoryError,
-    MemoryUsage, ObjectType, PhysicalDevice, PipelineCreationError, QueueGettingError,
+    shaderpack,
 };
+use cgmath::Vector2;
 use std::collections::{hash_map::RandomState, HashMap};
 
 pub struct Dx12Device {}
@@ -20,7 +26,7 @@ impl Device for Dx12Device {
     type Renderpass = Dx12Renderpass;
     type Framebuffer = Dx12Framebuffer;
     type PipelineInterface = Dx12PipelineInterface;
-    type DescriptorPool = Dx12PipelineInterface;
+    type DescriptorPool = Dx12DescriptorPool;
     type Pipeline = Dx12Pipeline;
     type Semaphore = Dx12Semaphore;
     type Fence = Dx12Fence;
@@ -45,7 +51,7 @@ impl Device for Dx12Device {
         unimplemented!()
     }
 
-    fn create_renderpass(&self, data: _) -> Result<Dx12Renderpass, MemoryError> {
+    fn create_renderpass(&self, data: shaderpack::RenderPassCreationInfo) -> Result<Dx12Renderpass, MemoryError> {
         unimplemented!()
     }
 
@@ -53,16 +59,16 @@ impl Device for Dx12Device {
         &self,
         renderpass: Dx12Renderpass,
         attachments: Vec<Dx12Image>,
-        framebuffer_size: _,
+        framebuffer_size: Vector2<f32>,
     ) -> Result<Dx12Framebuffer, MemoryError> {
         unimplemented!()
     }
 
     fn create_pipeline_interface(
         &self,
-        bindings: &HashMap<String, _, RandomState>,
-        color_attachments: &Vec<_>,
-        depth_texture: &Option<_>,
+        bindings: &HashMap<String, ResourceBindingDescription>,
+        color_attachments: &Vec<shaderpack::TextureAttachmentInfo>,
+        depth_texture: &Option<shaderpack::TextureAttachmentInfo>,
     ) -> Result<Dx12PipelineInterface, MemoryError> {
         unimplemented!()
     }
@@ -72,19 +78,19 @@ impl Device for Dx12Device {
         num_sampled_images: u32,
         num_samplers: u32,
         num_uniform_buffers: u32,
-    ) -> Result<Vec<Dx12PipelineInterface>, DescriptorPoolCreationError> {
+    ) -> Result<Vec<Dx12DescriptorPool>, DescriptorPoolCreationError> {
         unimplemented!()
     }
 
     fn create_pipeline(
         &self,
         pipeline_interface: Dx12PipelineInterface,
-        data: _,
+        data: shaderpack::PipelineCreationInfo,
     ) -> Result<Dx12Pipeline, PipelineCreationError> {
         unimplemented!()
     }
 
-    fn create_image(&self, data: _) -> Result<Dx12Image, MemoryError> {
+    fn create_image(&self, data: shaderpack::TextureCreateInfo) -> Result<Dx12Image, MemoryError> {
         unimplemented!()
     }
 

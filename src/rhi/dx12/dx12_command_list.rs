@@ -3,8 +3,11 @@ use crate::rhi::{
         dx12_buffer::Dx12Buffer, dx12_descriptor_set::Dx12DescriptorSet, dx12_framebuffer::Dx12Framebuffer,
         dx12_pipeline::Dx12Pipeline, dx12_pipeline_interface::Dx12PipelineInterface, dx12_renderpass::Dx12Renderpass,
     },
+    rhi_enums::PipelineStageFlags,
     CommandList, ResourceBarrier,
 };
+
+use crate::shaderpack;
 
 pub struct Dx12CommandList {}
 
@@ -17,7 +20,11 @@ impl CommandList for Dx12CommandList {
     type DescriptorSet = Dx12DescriptorSet;
     type PipelineInterface = Dx12PipelineInterface;
 
-    fn resource_barriers(stages_before_barrier: _, stages_after_barrier: _, barriers: Vec<ResourceBarrier>) {
+    fn resource_barriers(
+        stages_before_barrier: PipelineStageFlags,
+        stages_after_barrier: PipelineStageFlags,
+        barriers: Vec<ResourceBarrier>,
+    ) {
         unimplemented!()
     }
 
